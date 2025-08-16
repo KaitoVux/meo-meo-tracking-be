@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryKey,
   Property,
+  Filter,
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { Expense } from './expense.entity';
@@ -15,6 +16,7 @@ export enum UserRole {
 }
 
 @Entity()
+@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
 export class User {
   @PrimaryKey({ type: 'uuid' })
   id: string = v4();
@@ -39,6 +41,9 @@ export class User {
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  @Property({ nullable: true })
+  deletedAt?: Date;
 
   @OneToMany(() => Expense, (expense) => expense.submitter)
   expenses = new Collection<Expense>(this);

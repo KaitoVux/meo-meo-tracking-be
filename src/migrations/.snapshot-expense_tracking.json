@@ -75,6 +75,16 @@
           "length": 6,
           "mappedType": "datetime"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
         "parent_id": {
           "name": "parent_id",
           "type": "uuid",
@@ -211,6 +221,16 @@
           "nullable": false,
           "length": 6,
           "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
         }
       },
       "name": "user",
@@ -318,6 +338,16 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
           "length": 6,
           "mappedType": "datetime"
         },
@@ -528,6 +558,16 @@
           "length": 6,
           "mappedType": "datetime"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
         "submitter_id": {
           "name": "submitter_id",
           "type": "uuid",
@@ -672,6 +712,16 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
           "length": 6,
           "mappedType": "datetime"
         },

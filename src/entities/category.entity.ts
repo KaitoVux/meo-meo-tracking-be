@@ -5,11 +5,13 @@ import {
   ManyToOne,
   OneToMany,
   Collection,
+  Filter,
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { Expense } from './expense.entity';
 
 @Entity()
+@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
 export class Category {
   @PrimaryKey({ type: 'uuid' })
   id: string = v4();
@@ -31,6 +33,9 @@ export class Category {
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  @Property({ nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => Category, { nullable: true })
   parent?: Category;

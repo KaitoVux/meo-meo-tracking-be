@@ -5,12 +5,14 @@ import {
   ManyToOne,
   OneToMany,
   Collection,
+  Filter,
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { User } from './user.entity';
 import { Expense } from './expense.entity';
 
 @Entity()
+@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
 export class File {
   @PrimaryKey({ type: 'uuid' })
   id: string = v4();
@@ -35,6 +37,9 @@ export class File {
 
   @Property()
   createdAt: Date = new Date();
+
+  @Property({ nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => User)
   uploadedBy!: User;

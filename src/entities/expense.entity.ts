@@ -6,6 +6,7 @@ import {
   OneToMany,
   Collection,
   Enum,
+  Filter,
 } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { User } from './user.entity';
@@ -32,6 +33,7 @@ export enum ExpenseStatus {
 }
 
 @Entity()
+@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
 export class Expense {
   @PrimaryKey({ type: 'uuid' })
   id: string = v4();
@@ -77,6 +79,9 @@ export class Expense {
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  @Property({ nullable: true })
+  deletedAt?: Date;
 
   // Relations
   @ManyToOne(() => User)

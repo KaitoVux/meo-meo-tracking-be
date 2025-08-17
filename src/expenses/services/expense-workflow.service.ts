@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
 import { Expense, ExpenseStatus } from '../../entities/expense.entity';
 import { ExpenseStatusHistory } from '../../entities/expense-status-history.entity';
@@ -13,7 +18,13 @@ export interface StatusTransition {
 
 @Injectable()
 export class ExpenseWorkflowService {
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    @Inject(forwardRef(() => 'NotificationService'))
+    private readonly notificationService?: any,
+    @Inject(forwardRef(() => 'ReminderService'))
+    private readonly reminderService?: any,
+  ) {}
 
   // Define allowed status transitions (Requirements 2.1-2.5)
   private readonly allowedTransitions: StatusTransition[] = [
@@ -82,7 +93,7 @@ export class ExpenseWorkflowService {
     await this.em.flush();
 
     // Handle post-transition actions
-    this.handlePostTransitionActions(expense, oldStatus, newStatus);
+    await this.handlePostTransitionActions(expense, oldStatus, newStatus);
 
     return expense;
   }
@@ -137,24 +148,37 @@ export class ExpenseWorkflowService {
    * Handles actions after status transitions
    * Requirement 2.7: Reminder to collect invoice after payment
    */
-  private handlePostTransitionActions(
+  private async handlePostTransitionActions(
     expense: Expense,
     oldStatus: ExpenseStatus,
     newStatus: ExpenseStatus,
-  ): void {
+  ): Promise<void> {
     // When status changes to PAID, create reminder for invoice collection
-    if (newStatus === ExpenseStatus.PAID) {
-      // This would typically trigger a notification service
-      // For now, we'll log the reminder requirement
-      console.log(
-        `Reminder: Collect invoice for expense ${expense.id} (Payment ID: ${expense.paymentId})`,
-      );
+    if (newStatus === ExpenseStatus.PAID && this.reminderService) {
+      try {
+        await this.reminderService.createInvoiceCollectionReminder(expense);
+      } catch (error) {
+        console.error('Failed to create invoice reminder:', error);
+      }
     }
 
     // When status changes to SUBMITTED, validate completeness
     if (newStatus === ExpenseStatus.SUBMITTED) {
-      // Additional validation or notification logic can be added here
       console.log(`Expense ${expense.id} submitted for review`);
+    }
+
+    // Notify about status change
+    if (this.notificationService) {
+      try {
+        await this.notificationService.notifyStatusChange(
+          expense.submitter.id,
+          expense.id,
+          oldStatus,
+          newStatus,
+        );
+      } catch (error) {
+        console.error('Failed to send status change notification:', error);
+      }
     }
   }
 

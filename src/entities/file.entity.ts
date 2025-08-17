@@ -26,7 +26,7 @@ export class File {
   @Property()
   mimeType!: string;
 
-  @Property({ type: 'bigint' })
+  @Property({ type: 'number' })
   size!: number;
 
   @Property()

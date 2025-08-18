@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ExpenseModule } from './expenses/expense.module';
 import { FilesModule } from './files/files.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { CategoryModule } from './categories/category.module';
 import config from './mikro-orm.config';
 
 @Module({
@@ -15,6 +16,7 @@ import config from './mikro-orm.config';
     ExpenseModule,
     FilesModule,
     NotificationsModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

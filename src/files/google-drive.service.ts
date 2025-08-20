@@ -53,7 +53,7 @@ export class GoogleDriveService {
       this.logger.log('Google Drive API initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Google Drive API', error);
-      throw new BadRequestException('Google Drive configuration error');
+      //   throw new BadRequestException('Google Drive configuration error');
     }
   }
 

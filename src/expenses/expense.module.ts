@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ExpenseController } from './expense.controller';
 import { ExpenseService } from './services/expense.service';
@@ -9,10 +9,12 @@ import { Expense } from '../entities/expense.entity';
 import { ExpenseStatusHistory } from '../entities/expense-status-history.entity';
 import { User } from '../entities/user.entity';
 import { File } from '../entities/file.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([Expense, ExpenseStatusHistory, User, File]),
+    forwardRef(() => NotificationsModule),
   ],
   controllers: [ExpenseController],
   providers: [

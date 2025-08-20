@@ -8,6 +8,8 @@ import { EntityManager } from '@mikro-orm/core';
 import { Expense, ExpenseStatus } from '../../entities/expense.entity';
 import { ExpenseStatusHistory } from '../../entities/expense-status-history.entity';
 import { User } from '../../entities/user.entity';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { ReminderService } from '../../notifications/services/reminder.service';
 
 export interface StatusTransition {
   from: ExpenseStatus;
@@ -20,10 +22,8 @@ export interface StatusTransition {
 export class ExpenseWorkflowService {
   constructor(
     private readonly em: EntityManager,
-    @Inject(forwardRef(() => 'NotificationService'))
-    private readonly notificationService?: any,
-    @Inject(forwardRef(() => 'ReminderService'))
-    private readonly reminderService?: any,
+    private readonly notificationService: NotificationService,
+    private readonly reminderService: ReminderService,
   ) {}
 
   // Define allowed status transitions (Requirements 2.1-2.5)

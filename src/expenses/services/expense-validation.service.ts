@@ -23,7 +23,7 @@ export class ExpenseValidationService {
       errors.push('Date is required');
     }
 
-    if (!dto.vendor) {
+    if (!dto.vendorId) {
       missingFields.push('Vendor');
       errors.push('Vendor is required');
     }

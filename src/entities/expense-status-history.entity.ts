@@ -1,21 +1,10 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  ManyToOne,
-  Enum,
-  Filter,
-} from '@mikro-orm/core';
-import { v4 } from 'uuid';
+import { Entity, Property, ManyToOne, Enum } from '@mikro-orm/core';
 import { Expense, ExpenseStatus } from './expense.entity';
 import { User } from './user.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
-export class ExpenseStatusHistory {
-  @PrimaryKey({ type: 'uuid' })
-  id: string = v4();
-
+export class ExpenseStatusHistory extends BaseEntity {
   @Enum(() => ExpenseStatus)
   fromStatus!: ExpenseStatus;
 
@@ -24,12 +13,6 @@ export class ExpenseStatusHistory {
 
   @Property({ nullable: true, type: 'text' })
   notes?: string;
-
-  @Property()
-  createdAt: Date = new Date();
-
-  @Property({ nullable: true })
-  deletedAt?: Date;
 
   @ManyToOne(() => Expense)
   expense!: Expense;

@@ -12,6 +12,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
+// Type for user without password but with all other methods intact
+type UserWithoutPassword = Omit<User, 'password'>;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,7 +26,7 @@ export class AuthService {
 
   async register(
     createUserDto: CreateUserDto,
-  ): Promise<{ user: Omit<User, 'password'>; token: string }> {
+  ): Promise<{ user: UserWithoutPassword; token: string }> {
     const existingUser = await this.userRepository.findOne({
       email: createUserDto.email,
     });
@@ -41,26 +44,37 @@ export class AuthService {
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
+      // Audit fields will be populated automatically by AuditSubscriber
     });
 
     await this.em.persistAndFlush(user);
 
     const token = this.generateToken(user);
-    const { password: _password, ...userWithoutPassword } = user;
+    // Create a copy of user without password field
+    const userWithoutPassword = Object.assign(
+      Object.create(Object.getPrototypeOf(user)),
+      user,
+    ) as UserWithoutPassword;
+    delete (userWithoutPassword as any).password;
 
     return { user: userWithoutPassword, token };
   }
 
   async login(
     loginDto: LoginDto,
-  ): Promise<{ user: Omit<User, 'password'>; token: string }> {
+  ): Promise<{ user: UserWithoutPassword; token: string }> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const token = this.generateToken(user);
-    const { password: _password, ...userWithoutPassword } = user;
+    // Create a copy of user without password field
+    const userWithoutPassword = Object.assign(
+      Object.create(Object.getPrototypeOf(user)),
+      user,
+    ) as UserWithoutPassword;
+    delete (userWithoutPassword as any).password;
 
     return { user: userWithoutPassword, token };
   }
@@ -80,7 +94,7 @@ export class AuthService {
   async updateProfile(
     userId: string,
     updateProfileDto: UpdateProfileDto,
-  ): Promise<Omit<User, 'password'>> {
+  ): Promise<UserWithoutPassword> {
     const user = await this.userRepository.findOne({ id: userId });
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -94,10 +108,30 @@ export class AuthService {
       user.password = await bcrypt.hash(updateProfileDto.password, 10);
     }
 
+    // updatedBy will be populated automatically by AuditSubscriber
+
     await this.em.persistAndFlush(user);
 
-    const { password: _password, ...userWithoutPassword } = user;
+    // Create a copy of user without password field
+    const userWithoutPassword = Object.assign(
+      Object.create(Object.getPrototypeOf(user)),
+      user,
+    ) as UserWithoutPassword;
+    delete (userWithoutPassword as any).password;
     return userWithoutPassword;
+  }
+
+  async softDeleteUser(userId: string): Promise<void> {
+    const user = await this.userRepository.findOne({ id: userId });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Use the BaseEntity's soft delete method
+    // The deletedBy will be set automatically by the method using current user context
+    user.softDelete();
+
+    await this.em.persistAndFlush(user);
   }
 
   private generateToken(user: User): string {

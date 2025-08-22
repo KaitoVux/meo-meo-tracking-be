@@ -1,18 +1,17 @@
 import {
   Entity,
-  PrimaryKey,
   Property,
   ManyToOne,
   OneToMany,
   Collection,
   Enum,
-  Filter,
 } from '@mikro-orm/core';
-import { v4 } from 'uuid';
 import { User } from './user.entity';
 import { File } from './file.entity';
 import { Category } from './category.entity';
+import { Vendor } from './vendor.entity';
 import { ExpenseStatusHistory } from './expense-status-history.entity';
+import { BaseEntity } from './base.entity';
 
 export enum Currency {
   VND = 'VND',
@@ -24,6 +23,11 @@ export enum PaymentMethod {
   BANK_TRANSFER = 'BANK_TRANSFER',
 }
 
+export enum ExpenseType {
+  IN = 'IN',
+  OUT = 'OUT',
+}
+
 export enum ExpenseStatus {
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
@@ -33,11 +37,7 @@ export enum ExpenseStatus {
 }
 
 @Entity()
-@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
-export class Expense {
-  @PrimaryKey({ type: 'uuid' })
-  id: string = v4();
-
+export class Expense extends BaseEntity {
   @Property()
   paymentId!: string;
 
@@ -47,14 +47,46 @@ export class Expense {
   @Property({ type: 'date' })
   date!: Date;
 
-  @Property()
-  vendor!: string;
+  @Property({ type: 'date', fieldName: 'transaction_date' })
+  transactionDate!: Date;
+
+  @Property({ fieldName: 'expense_month' })
+  expenseMonth!: string; // Format: "September" or "YYYY-MM"
 
   @Property()
   category!: string;
 
+  @Enum(() => ExpenseType)
+  type: ExpenseType = ExpenseType.OUT;
+
+  @Property({
+    type: 'decimal',
+    precision: 15,
+    scale: 2,
+    fieldName: 'amount_before_vat',
+  })
+  amountBeforeVAT!: number;
+
+  @Property({
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    nullable: true,
+    fieldName: 'vat_percentage',
+  })
+  vatPercentage?: number;
+
+  @Property({
+    type: 'decimal',
+    precision: 15,
+    scale: 2,
+    nullable: true,
+    fieldName: 'vat_amount',
+  })
+  vatAmount?: number;
+
   @Property({ type: 'decimal', precision: 15, scale: 2 })
-  amount!: number;
+  amount!: number; // This becomes "Amount (After VAT)"
 
   @Enum(() => Currency)
   currency: Currency = Currency.VND;
@@ -74,18 +106,12 @@ export class Expense {
   @Enum(() => ExpenseStatus)
   status: ExpenseStatus = ExpenseStatus.DRAFT;
 
-  @Property()
-  createdAt: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date = new Date();
-
-  @Property({ nullable: true })
-  deletedAt?: Date;
-
   // Relations
   @ManyToOne(() => User)
   submitter!: User;
+
+  @ManyToOne(() => Vendor)
+  vendor!: Vendor;
 
   @ManyToOne(() => File, { nullable: true })
   invoiceFile?: File;

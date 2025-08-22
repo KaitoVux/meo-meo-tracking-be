@@ -1,14 +1,13 @@
 import {
   Entity,
-  PrimaryKey,
   Property,
   ManyToOne,
   Enum,
   Index,
 } from '@mikro-orm/core';
-import { v4 } from 'uuid';
 import { User } from './user.entity';
 import { Expense } from './expense.entity';
+import { BaseEntity } from './base.entity';
 
 export enum NotificationType {
   MISSING_FIELDS = 'missing_fields',
@@ -33,10 +32,7 @@ export enum NotificationStatus {
 @Entity()
 @Index({ properties: ['recipient', 'status'] })
 @Index({ properties: ['type', 'createdAt'] })
-export class Notification {
-  @PrimaryKey()
-  id: string = v4();
-
+export class Notification extends BaseEntity {
   @Property()
   title: string;
 
@@ -61,20 +57,11 @@ export class Notification {
   @Property({ type: 'json', nullable: true })
   metadata?: Record<string, any>;
 
-  @Property()
-  createdAt: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date = new Date();
-
   @Property({ nullable: true })
   readAt?: Date;
 
   @Property({ nullable: true })
   dismissedAt?: Date;
-
-  @Property({ default: false })
-  isDeleted: boolean = false;
 
   constructor(
     title: string,
@@ -83,6 +70,7 @@ export class Notification {
     recipient: User,
     priority: NotificationPriority = NotificationPriority.MEDIUM,
   ) {
+    super();
     this.title = title;
     this.message = message;
     this.type = type;

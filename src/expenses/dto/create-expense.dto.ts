@@ -8,24 +8,49 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import { Currency, PaymentMethod } from '../../entities/expense.entity';
+import { Currency, PaymentMethod, ExpenseType } from '../../entities/expense.entity';
 
 export class CreateExpenseDto {
   @IsDateString()
   @IsNotEmpty()
   date!: string;
 
+  @IsDateString()
+  @IsNotEmpty()
+  transactionDate!: string;
+
   @IsString()
   @IsNotEmpty()
-  vendor!: string;
+  expenseMonth!: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  vendorId!: string;
 
   @IsString()
   @IsNotEmpty()
   category!: string;
 
+  @IsEnum(ExpenseType)
+  type: ExpenseType = ExpenseType.OUT;
+
   @IsNumber()
   @Min(0)
-  amount!: number;
+  amountBeforeVAT!: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  vatPercentage?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  vatAmount?: number;
+
+  @IsNumber()
+  @Min(0)
+  amount!: number; // Amount after VAT
 
   @IsEnum(Currency)
   currency: Currency = Currency.VND;

@@ -6,6 +6,7 @@ import {
 import { EntityManager, FilterQuery, FindOptions } from '@mikro-orm/core';
 import { Expense, ExpenseStatus } from '../../entities/expense.entity';
 import { User } from '../../entities/user.entity';
+import { Vendor } from '../../entities/vendor.entity';
 import { CreateExpenseDto, UpdateExpenseDto, ExpenseQueryDto } from '../dto';
 import { ExpenseValidationService } from './expense-validation.service';
 import { PaymentIdService } from './payment-id.service';
@@ -52,10 +53,18 @@ export class ExpenseService {
       throw new BadRequestException('Submitter not found');
     }
 
+    // Verify vendor exists
+    const vendor = await this.em.findOne(Vendor, {
+      id: createExpenseDto.vendorId,
+    });
+    if (!vendor) {
+      throw new BadRequestException('Vendor not found');
+    }
+
     // Generate payment ID
     const expenseDate = new Date(createExpenseDto.date);
     const { paymentId, subId } = await this.paymentIdService.generatePaymentId(
-      createExpenseDto.vendor,
+      vendor.name,
       expenseDate,
     );
 
@@ -64,8 +73,14 @@ export class ExpenseService {
     expense.paymentId = paymentId;
     expense.subId = subId;
     expense.date = expenseDate;
-    expense.vendor = createExpenseDto.vendor;
+    expense.transactionDate = new Date(createExpenseDto.transactionDate);
+    expense.expenseMonth = createExpenseDto.expenseMonth;
+    expense.vendor = vendor;
     expense.category = createExpenseDto.category;
+    expense.type = createExpenseDto.type;
+    expense.amountBeforeVAT = createExpenseDto.amountBeforeVAT;
+    expense.vatPercentage = createExpenseDto.vatPercentage;
+    expense.vatAmount = createExpenseDto.vatAmount;
     expense.amount = createExpenseDto.amount;
     expense.currency = createExpenseDto.currency;
     expense.exchangeRate = createExpenseDto.exchangeRate;
@@ -206,8 +221,14 @@ export class ExpenseService {
     if (updateExpenseDto.date) {
       expense.date = new Date(updateExpenseDto.date);
     }
-    if (updateExpenseDto.vendor) {
-      expense.vendor = updateExpenseDto.vendor;
+    if (updateExpenseDto.vendorId) {
+      const vendor = await this.em.findOne(Vendor, {
+        id: updateExpenseDto.vendorId,
+      });
+      if (!vendor) {
+        throw new BadRequestException('Vendor not found');
+      }
+      expense.vendor = vendor;
     }
     if (updateExpenseDto.category) {
       expense.category = updateExpenseDto.category;

@@ -1,22 +1,16 @@
 import {
   Entity,
-  PrimaryKey,
   Property,
   ManyToOne,
   OneToMany,
   Collection,
-  Filter,
 } from '@mikro-orm/core';
-import { v4 } from 'uuid';
 import { User } from './user.entity';
 import { Expense } from './expense.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
-export class File {
-  @PrimaryKey({ type: 'uuid' })
-  id: string = v4();
-
+export class File extends BaseEntity {
   @Property()
   filename!: string;
 
@@ -34,12 +28,6 @@ export class File {
 
   @Property()
   googleDriveUrl!: string;
-
-  @Property()
-  createdAt: Date = new Date();
-
-  @Property({ nullable: true })
-  deletedAt?: Date;
 
   @ManyToOne(() => User)
   uploadedBy!: User;

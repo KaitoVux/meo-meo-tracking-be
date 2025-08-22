@@ -59,7 +59,7 @@ export class NotificationService {
     limit: number = 50,
     offset: number = 0,
   ): Promise<{ notifications: Notification[]; total: number }> {
-    const where: any = { recipient: userId, isDeleted: false };
+    const where: any = { recipient: userId };
     if (status) {
       where.status = status;
     }
@@ -122,7 +122,7 @@ export class NotificationService {
       {
         recipient: userId,
         status: NotificationStatus.UNREAD,
-        isDeleted: false,
+        deletedAt: null,
       },
       {
         status: NotificationStatus.READ,
@@ -138,7 +138,6 @@ export class NotificationService {
     return this.em.count(Notification, {
       recipient: userId,
       status: NotificationStatus.UNREAD,
-      isDeleted: false,
     });
   }
 
@@ -153,10 +152,10 @@ export class NotificationService {
       Notification,
       {
         createdAt: { $lt: cutoffDate },
-        isDeleted: false,
+        deletedAt: null,
       },
       {
-        isDeleted: true,
+        deletedAt: new Date(),
       },
     );
 

@@ -62,18 +62,17 @@ export class ExpenseService {
     }
 
     // Generate payment ID
-    const expenseDate = new Date(createExpenseDto.date);
+    const expenseTransactionDate = new Date(createExpenseDto.transactionDate);
     const { paymentId, subId } = await this.paymentIdService.generatePaymentId(
       vendor.name,
-      expenseDate,
+      expenseTransactionDate,
     );
 
     // Create expense entity
     const expense = new Expense();
     expense.paymentId = paymentId;
     expense.subId = subId;
-    expense.date = expenseDate;
-    expense.transactionDate = new Date(createExpenseDto.transactionDate);
+    expense.transactionDate = expenseTransactionDate;
     expense.expenseMonth = createExpenseDto.expenseMonth;
     expense.vendor = vendor;
     expense.category = createExpenseDto.category;
@@ -142,14 +141,14 @@ export class ExpenseService {
       where.paymentId = { $ilike: `%${query.paymentId}%` };
     }
 
-    // Date range filtering
+    // Transaction date range filtering
     if (query.dateFrom || query.dateTo) {
-      where.date = {};
+      where.transactionDate = {};
       if (query.dateFrom) {
-        where.date.$gte = new Date(query.dateFrom);
+        where.transactionDate.$gte = new Date(query.dateFrom);
       }
       if (query.dateTo) {
-        where.date.$lte = new Date(query.dateTo);
+        where.transactionDate.$lte = new Date(query.dateTo);
       }
     }
 
@@ -218,8 +217,8 @@ export class ExpenseService {
     }
 
     // Update fields
-    if (updateExpenseDto.date) {
-      expense.date = new Date(updateExpenseDto.date);
+    if (updateExpenseDto.transactionDate) {
+      expense.transactionDate = new Date(updateExpenseDto.transactionDate);
     }
     if (updateExpenseDto.vendorId) {
       const vendor = await this.em.findOne(Vendor, {

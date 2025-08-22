@@ -18,9 +18,9 @@ export class ExpenseValidationService {
     const missingFields: string[] = [];
 
     // Check mandatory fields as per requirements 1.1
-    if (!dto.date) {
-      missingFields.push('Date');
-      errors.push('Date is required');
+    if (!dto.transactionDate) {
+      missingFields.push('Transaction Date');
+      errors.push('Transaction date is required');
     }
 
     if (!dto.vendorId) {
@@ -60,11 +60,11 @@ export class ExpenseValidationService {
       errors.push('Exchange rate is required for USD currency');
     }
 
-    // Validate date format
-    if (dto.date) {
-      const date = new Date(dto.date);
+    // Validate transaction date format
+    if (dto.transactionDate) {
+      const date = new Date(dto.transactionDate);
       if (isNaN(date.getTime())) {
-        errors.push('Invalid date format');
+        errors.push('Invalid transaction date format');
       }
     }
 
@@ -98,10 +98,10 @@ export class ExpenseValidationService {
       errors.push('Exchange rate is required for USD currency');
     }
 
-    if (dto.date) {
-      const date = new Date(dto.date);
+    if (dto.transactionDate) {
+      const date = new Date(dto.transactionDate);
       if (isNaN(date.getTime())) {
-        errors.push('Invalid date format');
+        errors.push('Invalid transaction date format');
       }
     }
 
@@ -120,8 +120,8 @@ export class ExpenseValidationService {
     const missingFields: string[] = [];
 
     // Check all mandatory fields for submission
-    if (!expense.date) {
-      missingFields.push('Date');
+    if (!expense.transactionDate) {
+      missingFields.push('Transaction Date');
     }
 
     if (!expense.vendor) {

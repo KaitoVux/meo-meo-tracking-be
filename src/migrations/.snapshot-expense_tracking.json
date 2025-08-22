@@ -1,7 +1,5 @@
 {
-  "namespaces": [
-    "public"
-  ],
+  "namespaces": ["public"],
   "name": "public",
   "tables": [
     {
@@ -110,10 +108,7 @@
           "primary": false,
           "nullable": false,
           "default": "'USER'",
-          "enumItems": [
-            "ACCOUNTANT",
-            "USER"
-          ],
+          "enumItems": ["ACCOUNTANT", "USER"],
           "mappedType": "enum"
         },
         "is_active": {
@@ -131,9 +126,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "email"
-          ],
+          "columnNames": ["email"],
           "composite": false,
           "keyName": "user_email_unique",
           "constraint": true,
@@ -142,9 +135,7 @@
         },
         {
           "keyName": "user_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -155,39 +146,27 @@
       "foreignKeys": {
         "user_created_by_id_foreign": {
           "constraintName": "user_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.user",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "user_updated_by_id_foreign": {
           "constraintName": "user_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.user",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "user_deleted_by_id_foreign": {
           "constraintName": "user_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.user",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -337,9 +316,7 @@
       "indexes": [
         {
           "keyName": "file_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -350,52 +327,36 @@
       "foreignKeys": {
         "file_created_by_id_foreign": {
           "constraintName": "file_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.file",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "file_updated_by_id_foreign": {
           "constraintName": "file_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.file",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "file_deleted_by_id_foreign": {
           "constraintName": "file_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.file",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "file_uploaded_by_id_foreign": {
           "constraintName": "file_uploaded_by_id_foreign",
-          "columnNames": [
-            "uploaded_by_id"
-          ],
+          "columnNames": ["uploaded_by_id"],
           "localTableName": "public.file",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         }
@@ -524,9 +485,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "code"
-          ],
+          "columnNames": ["code"],
           "composite": false,
           "keyName": "category_code_unique",
           "constraint": true,
@@ -535,9 +494,7 @@
         },
         {
           "keyName": "category_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -548,52 +505,36 @@
       "foreignKeys": {
         "category_created_by_id_foreign": {
           "constraintName": "category_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.category",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "category_updated_by_id_foreign": {
           "constraintName": "category_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.category",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "category_deleted_by_id_foreign": {
           "constraintName": "category_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.category",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "category_parent_id_foreign": {
           "constraintName": "category_parent_id_foreign",
-          "columnNames": [
-            "parent_id"
-          ],
+          "columnNames": ["parent_id"],
           "localTableName": "public.category",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.category",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -736,10 +677,7 @@
           "primary": false,
           "nullable": false,
           "default": "'ACTIVE'",
-          "enumItems": [
-            "ACTIVE",
-            "INACTIVE"
-          ],
+          "enumItems": ["ACTIVE", "INACTIVE"],
           "mappedType": "enum"
         }
       },
@@ -748,9 +686,7 @@
       "indexes": [
         {
           "keyName": "vendor_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -761,39 +697,27 @@
       "foreignKeys": {
         "vendor_created_by_id_foreign": {
           "constraintName": "vendor_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.vendor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "vendor_updated_by_id_foreign": {
           "constraintName": "vendor_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.vendor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "vendor_deleted_by_id_foreign": {
           "constraintName": "vendor_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.vendor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -889,16 +813,6 @@
           "length": 255,
           "mappedType": "string"
         },
-        "date": {
-          "name": "date",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        },
         "transaction_date": {
           "name": "transaction_date",
           "type": "date",
@@ -937,10 +851,7 @@
           "primary": false,
           "nullable": false,
           "default": "'OUT'",
-          "enumItems": [
-            "IN",
-            "OUT"
-          ],
+          "enumItems": ["IN", "OUT"],
           "mappedType": "enum"
         },
         "amount_before_vat": {
@@ -995,10 +906,7 @@
           "primary": false,
           "nullable": false,
           "default": "'VND'",
-          "enumItems": [
-            "VND",
-            "USD"
-          ],
+          "enumItems": ["VND", "USD"],
           "mappedType": "enum"
         },
         "exchange_rate": {
@@ -1038,10 +946,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "enumItems": [
-            "CASH",
-            "BANK_TRANSFER"
-          ],
+          "enumItems": ["CASH", "BANK_TRANSFER"],
           "mappedType": "enum"
         },
         "status": {
@@ -1052,13 +957,7 @@
           "primary": false,
           "nullable": false,
           "default": "'DRAFT'",
-          "enumItems": [
-            "DRAFT",
-            "SUBMITTED",
-            "APPROVED",
-            "PAID",
-            "CLOSED"
-          ],
+          "enumItems": ["DRAFT", "SUBMITTED", "APPROVED", "PAID", "CLOSED"],
           "mappedType": "enum"
         },
         "submitter_id": {
@@ -1103,9 +1002,7 @@
       "indexes": [
         {
           "keyName": "expense_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1116,89 +1013,61 @@
       "foreignKeys": {
         "expense_created_by_id_foreign": {
           "constraintName": "expense_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_updated_by_id_foreign": {
           "constraintName": "expense_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_deleted_by_id_foreign": {
           "constraintName": "expense_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_submitter_id_foreign": {
           "constraintName": "expense_submitter_id_foreign",
-          "columnNames": [
-            "submitter_id"
-          ],
+          "columnNames": ["submitter_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "expense_vendor_id_foreign": {
           "constraintName": "expense_vendor_id_foreign",
-          "columnNames": [
-            "vendor_id"
-          ],
+          "columnNames": ["vendor_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.vendor",
           "updateRule": "cascade"
         },
         "expense_invoice_file_id_foreign": {
           "constraintName": "expense_invoice_file_id_foreign",
-          "columnNames": [
-            "invoice_file_id"
-          ],
+          "columnNames": ["invoice_file_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.file",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_category_entity_id_foreign": {
           "constraintName": "expense_category_entity_id_foreign",
-          "columnNames": [
-            "category_entity_id"
-          ],
+          "columnNames": ["category_entity_id"],
           "localTableName": "public.expense",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.category",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1316,12 +1185,7 @@
           "primary": false,
           "nullable": false,
           "default": "'medium'",
-          "enumItems": [
-            "low",
-            "medium",
-            "high",
-            "urgent"
-          ],
+          "enumItems": ["low", "medium", "high", "urgent"],
           "mappedType": "enum"
         },
         "status": {
@@ -1332,11 +1196,7 @@
           "primary": false,
           "nullable": false,
           "default": "'unread'",
-          "enumItems": [
-            "unread",
-            "read",
-            "dismissed"
-          ],
+          "enumItems": ["unread", "read", "dismissed"],
           "mappedType": "enum"
         },
         "recipient_id": {
@@ -1392,10 +1252,7 @@
       "indexes": [
         {
           "keyName": "notification_type_created_at_index",
-          "columnNames": [
-            "type",
-            "created_at"
-          ],
+          "columnNames": ["type", "created_at"],
           "composite": true,
           "constraint": false,
           "primary": false,
@@ -1403,10 +1260,7 @@
         },
         {
           "keyName": "notification_recipient_id_status_index",
-          "columnNames": [
-            "recipient_id",
-            "status"
-          ],
+          "columnNames": ["recipient_id", "status"],
           "composite": true,
           "constraint": false,
           "primary": false,
@@ -1414,9 +1268,7 @@
         },
         {
           "keyName": "notification_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1427,64 +1279,44 @@
       "foreignKeys": {
         "notification_created_by_id_foreign": {
           "constraintName": "notification_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.notification",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "notification_updated_by_id_foreign": {
           "constraintName": "notification_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.notification",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "notification_deleted_by_id_foreign": {
           "constraintName": "notification_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.notification",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "notification_recipient_id_foreign": {
           "constraintName": "notification_recipient_id_foreign",
-          "columnNames": [
-            "recipient_id"
-          ],
+          "columnNames": ["recipient_id"],
           "localTableName": "public.notification",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "notification_related_expense_id_foreign": {
           "constraintName": "notification_related_expense_id_foreign",
-          "columnNames": [
-            "related_expense_id"
-          ],
+          "columnNames": ["related_expense_id"],
           "localTableName": "public.notification",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.expense",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1567,13 +1399,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "enumItems": [
-            "DRAFT",
-            "SUBMITTED",
-            "APPROVED",
-            "PAID",
-            "CLOSED"
-          ],
+          "enumItems": ["DRAFT", "SUBMITTED", "APPROVED", "PAID", "CLOSED"],
           "mappedType": "enum"
         },
         "to_status": {
@@ -1583,13 +1409,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "enumItems": [
-            "DRAFT",
-            "SUBMITTED",
-            "APPROVED",
-            "PAID",
-            "CLOSED"
-          ],
+          "enumItems": ["DRAFT", "SUBMITTED", "APPROVED", "PAID", "CLOSED"],
           "mappedType": "enum"
         },
         "notes": {
@@ -1625,9 +1445,7 @@
       "indexes": [
         {
           "keyName": "expense_status_history_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1638,64 +1456,44 @@
       "foreignKeys": {
         "expense_status_history_created_by_id_foreign": {
           "constraintName": "expense_status_history_created_by_id_foreign",
-          "columnNames": [
-            "created_by_id"
-          ],
+          "columnNames": ["created_by_id"],
           "localTableName": "public.expense_status_history",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_status_history_updated_by_id_foreign": {
           "constraintName": "expense_status_history_updated_by_id_foreign",
-          "columnNames": [
-            "updated_by_id"
-          ],
+          "columnNames": ["updated_by_id"],
           "localTableName": "public.expense_status_history",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_status_history_deleted_by_id_foreign": {
           "constraintName": "expense_status_history_deleted_by_id_foreign",
-          "columnNames": [
-            "deleted_by_id"
-          ],
+          "columnNames": ["deleted_by_id"],
           "localTableName": "public.expense_status_history",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "expense_status_history_expense_id_foreign": {
           "constraintName": "expense_status_history_expense_id_foreign",
-          "columnNames": [
-            "expense_id"
-          ],
+          "columnNames": ["expense_id"],
           "localTableName": "public.expense_status_history",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.expense",
           "updateRule": "cascade"
         },
         "expense_status_history_changed_by_id_foreign": {
           "constraintName": "expense_status_history_changed_by_id_foreign",
-          "columnNames": [
-            "changed_by_id"
-          ],
+          "columnNames": ["changed_by_id"],
           "localTableName": "public.expense_status_history",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         }

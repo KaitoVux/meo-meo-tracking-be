@@ -7,6 +7,7 @@ import {
   Currency,
   PaymentMethod,
   ExpenseStatus,
+  ExpenseType,
 } from '../../entities/expense.entity';
 
 describe('ExpenseValidationService', () => {
@@ -27,9 +28,12 @@ describe('ExpenseValidationService', () => {
   describe('validateExpenseCreation', () => {
     it('should pass validation with valid expense data', () => {
       const dto: CreateExpenseDto = {
-        date: '2024-01-15',
-        vendor: 'Test Vendor',
+        transactionDate: '2024-01-15',
+        expenseMonth: 'January',
+        vendorId: 'vendor-123',
         category: 'Office Supplies',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 95.0,
         amount: 100.5,
         currency: Currency.VND,
         description: 'Test expense description',
@@ -46,9 +50,12 @@ describe('ExpenseValidationService', () => {
 
     it('should fail validation with missing required fields', () => {
       const dto: CreateExpenseDto = {
-        date: '',
-        vendor: '',
+        transactionDate: '',
+        expenseMonth: '',
+        vendorId: '',
         category: '',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 0,
         amount: 0,
         currency: Currency.VND,
         description: '',
@@ -60,7 +67,7 @@ describe('ExpenseValidationService', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.missingFields).toContain('Date');
+      expect(result.missingFields).toContain('Transaction Date');
       expect(result.missingFields).toContain('Vendor');
       expect(result.missingFields).toContain('Category');
       expect(result.missingFields).toContain('Amount');
@@ -70,9 +77,12 @@ describe('ExpenseValidationService', () => {
 
     it('should require exchange rate for USD currency', () => {
       const dto: CreateExpenseDto = {
-        date: '2024-01-15',
-        vendor: 'Test Vendor',
+        transactionDate: '2024-01-15',
+        expenseMonth: 'January',
+        vendorId: 'vendor-123',
         category: 'Office Supplies',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 95.0,
         amount: 100.5,
         currency: Currency.USD,
         description: 'Test expense description',
@@ -88,11 +98,14 @@ describe('ExpenseValidationService', () => {
       );
     });
 
-    it('should validate date format', () => {
+    it('should validate transaction date format', () => {
       const dto: CreateExpenseDto = {
-        date: 'invalid-date',
-        vendor: 'Test Vendor',
+        transactionDate: 'invalid-date',
+        expenseMonth: 'January',
+        vendorId: 'vendor-123',
         category: 'Office Supplies',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 95.0,
         amount: 100.5,
         currency: Currency.VND,
         description: 'Test expense description',
@@ -103,14 +116,17 @@ describe('ExpenseValidationService', () => {
       const result = service.validateExpenseCreation(dto);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Invalid date format');
+      expect(result.errors).toContain('Invalid transaction date format');
     });
 
     it('should validate positive amount', () => {
       const dto: CreateExpenseDto = {
-        date: '2024-01-15',
-        vendor: 'Test Vendor',
+        transactionDate: '2024-01-15',
+        expenseMonth: 'January',
+        vendorId: 'vendor-123',
         category: 'Office Supplies',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 95.0,
         amount: -50,
         currency: Currency.VND,
         description: 'Test expense description',
@@ -179,8 +195,8 @@ describe('ExpenseValidationService', () => {
     beforeEach(() => {
       expense = new Expense();
       expense.id = 'expense-123';
-      expense.date = new Date();
-      expense.vendor = 'Test Vendor';
+      expense.transactionDate = new Date();
+      expense.vendor = { name: 'Test Vendor' } as any;
       expense.amount = 100;
       expense.description = 'Test description';
       expense.paymentMethod = PaymentMethod.CASH;

@@ -8,13 +8,13 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import { Currency, PaymentMethod, ExpenseType } from '../../entities/expense.entity';
+import {
+  Currency,
+  PaymentMethod,
+  ExpenseType,
+} from '../../entities/expense.entity';
 
 export class CreateExpenseDto {
-  @IsDateString()
-  @IsNotEmpty()
-  date!: string;
-
   @IsDateString()
   @IsNotEmpty()
   transactionDate!: string;

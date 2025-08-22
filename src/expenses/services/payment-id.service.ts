@@ -12,19 +12,23 @@ export class PaymentIdService {
    */
   async generatePaymentId(
     vendor: string,
-    date: Date,
+    transactionDate: Date,
   ): Promise<{ paymentId: string; subId?: string }> {
-    // Check if there are existing expenses for the same vendor on the same date
+    // Check if there are existing expenses for the same vendor on the same transaction date
     const existingExpensesForVendor = await this.em.find(
       Expense,
       {
         vendor,
-        date: {
-          $gte: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+        transactionDate: {
+          $gte: new Date(
+            transactionDate.getFullYear(),
+            transactionDate.getMonth(),
+            transactionDate.getDate(),
+          ),
           $lt: new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate() + 1,
+            transactionDate.getFullYear(),
+            transactionDate.getMonth(),
+            transactionDate.getDate() + 1,
           ),
         },
       },
@@ -34,7 +38,7 @@ export class PaymentIdService {
     );
 
     if (existingExpensesForVendor.length > 0) {
-      // Same vendor, same date - use sub-ID logic
+      // Same vendor, same transaction date - use sub-ID logic
       const latestExpense = existingExpensesForVendor[0];
       const basePaymentId = latestExpense.paymentId;
 
@@ -60,7 +64,7 @@ export class PaymentIdService {
       };
     }
 
-    // New vendor or different date - generate new payment ID
+    // New vendor or different transaction date - generate new payment ID
     const latestExpense = await this.em.findOne(
       Expense,
       {},

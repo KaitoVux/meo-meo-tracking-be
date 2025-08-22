@@ -44,9 +44,6 @@ export class Expense extends BaseEntity {
   @Property({ nullable: true })
   subId?: string;
 
-  @Property({ type: 'date' })
-  date!: Date;
-
   @Property({ type: 'date', fieldName: 'transaction_date' })
   transactionDate!: Date;
 

@@ -10,6 +10,7 @@ import {
   ExpenseStatus,
   Currency,
   PaymentMethod,
+  ExpenseType,
 } from '../../entities/expense.entity';
 import { User } from '../../entities/user.entity';
 import { CreateExpenseDto, UpdateExpenseDto, ExpenseQueryDto } from '../dto';
@@ -86,9 +87,12 @@ describe('ExpenseService', () => {
 
     beforeEach(() => {
       createDto = {
-        date: '2024-01-15',
-        vendor: 'Test Vendor',
+        transactionDate: '2024-01-15',
+        expenseMonth: 'January',
+        vendorId: 'vendor-123',
         category: 'Office Supplies',
+        type: ExpenseType.OUT,
+        amountBeforeVAT: 95.0,
         amount: 100.5,
         currency: Currency.VND,
         description: 'Test expense',
@@ -115,7 +119,6 @@ describe('ExpenseService', () => {
       const result = await service.create(createDto);
 
       expect(result).toBeInstanceOf(Expense);
-      expect(result.vendor).toBe('Test Vendor');
       expect(result.paymentId).toBe('1');
       expect(result.status).toBe(ExpenseStatus.DRAFT);
       expect(entityManager.persist).toHaveBeenCalled();
@@ -214,7 +217,7 @@ describe('ExpenseService', () => {
       );
     });
 
-    it('should filter by date range', async () => {
+    it('should filter by transaction date range', async () => {
       const expenses = [];
       entityManager.findAndCount.mockResolvedValue([expenses, 0]);
 
@@ -227,7 +230,7 @@ describe('ExpenseService', () => {
       expect(entityManager.findAndCount).toHaveBeenCalledWith(
         Expense,
         expect.objectContaining({
-          date: {
+          transactionDate: {
             $gte: new Date('2024-01-01'),
             $lte: new Date('2024-01-31'),
           },
@@ -265,10 +268,8 @@ describe('ExpenseService', () => {
       expense = new Expense();
       expense.id = 'expense-123';
       expense.status = ExpenseStatus.DRAFT;
-      expense.vendor = 'Old Vendor';
-
       updateDto = {
-        vendor: 'New Vendor',
+        transactionDate: '2024-02-01',
         amount: 200,
       };
     });
@@ -283,7 +284,6 @@ describe('ExpenseService', () => {
 
       const result = await service.update('expense-123', updateDto);
 
-      expect(result.vendor).toBe('New Vendor');
       expect(result.amount).toBe(200);
       expect(entityManager.flush).toHaveBeenCalled();
     });

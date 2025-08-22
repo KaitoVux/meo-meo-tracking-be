@@ -133,7 +133,7 @@ export class ExpenseWorkflowService {
     if (!expense.vendor) missingFields.push('Vendor');
     if (!expense.amount || expense.amount <= 0) missingFields.push('Amount');
     if (!expense.description) missingFields.push('Description');
-    if (!expense.date) missingFields.push('Date');
+    if (!expense.transactionDate) missingFields.push('Transaction Date');
     if (!expense.paymentMethod) missingFields.push('Payment method');
 
     if (missingFields.length > 0) {

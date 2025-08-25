@@ -5,7 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { tap, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { User } from '../../entities/user.entity';
 import { AuditContext } from '../services/audit-context.service';
 
@@ -13,7 +13,7 @@ import { AuditContext } from '../services/audit-context.service';
 export class AuditInterceptor implements NestInterceptor {
   constructor(private readonly auditContext: AuditContext) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const user: User = request.user; // User attached by auth guard
 
@@ -22,11 +22,6 @@ export class AuditInterceptor implements NestInterceptor {
       this.auditContext.setCurrentUser(user);
     }
 
-    return next.handle().pipe(
-      finalize(() => {
-        // Clear the user context after the request is complete
-        this.auditContext.clearUser();
-      }),
-    );
+    return next.handle();
   }
 }

@@ -1,19 +1,20 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { AsyncLocalStorage } from 'async_hooks';
 import { User } from '../../entities/user.entity';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class AuditContext {
-  private currentUser: User | null = null;
+  private static asyncLocalStorage = new AsyncLocalStorage<User>();
 
   setCurrentUser(user: User): void {
-    this.currentUser = user;
+    AuditContext.asyncLocalStorage.enterWith(user);
   }
 
   getCurrentUser(): User | null {
-    return this.currentUser;
+    return AuditContext.asyncLocalStorage.getStore() || null;
   }
 
   clearUser(): void {
-    this.currentUser = null;
+    AuditContext.asyncLocalStorage.enterWith(undefined as any);
   }
 }

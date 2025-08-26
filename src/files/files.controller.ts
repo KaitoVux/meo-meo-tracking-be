@@ -19,6 +19,7 @@ import {
   FileResponseDto,
   FileUploadResponseDto,
 } from './dto/file-response.dto';
+import { ResponseHelper } from '../common/decorators/api-response.decorator';
 
 @Controller('api/files')
 @UseGuards(JwtAuthGuard)
@@ -31,7 +32,7 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: UserEntity,
     @Query('folderId') folderId?: string,
-  ): Promise<FileUploadResponseDto> {
+  ) {
     if (!file) {
       throw new BadRequestException('No file provided');
     }
@@ -44,35 +45,35 @@ export class FilesController {
       folderId,
     );
 
-    return new FileUploadResponseDto(result.file, result.googleDriveFile);
+    const responseData = new FileUploadResponseDto(
+      result.file,
+      result.googleDriveFile,
+    );
+    return ResponseHelper.created(responseData, 'File uploaded successfully');
   }
 
   @Get(':id')
-  async getFile(@Param('id') id: string): Promise<FileResponseDto> {
+  async getFile(@Param('id') id: string) {
     const file = await this.filesService.getFile(id);
-    return new FileResponseDto(file);
+    const responseData = new FileResponseDto(file);
+    return ResponseHelper.success(responseData);
   }
 
   @Get(':id/details')
   async getFileWithGoogleDriveInfo(@Param('id') id: string) {
     const { file, googleDriveFile } =
       await this.filesService.getFileWithGoogleDriveInfo(id);
-    return {
+    const responseData = {
       file: new FileResponseDto(file),
       googleDriveFile,
     };
+    return ResponseHelper.success(responseData);
   }
 
   @Delete(':id')
-  async deleteFile(
-    @Param('id') id: string,
-    @CurrentUser() user: UserEntity,
-  ): Promise<{ success: boolean; message: string }> {
+  async deleteFile(@Param('id') id: string, @CurrentUser() user: UserEntity) {
     await this.filesService.deleteFile(id, user);
-    return {
-      success: true,
-      message: 'File deleted successfully',
-    };
+    return ResponseHelper.deleted('File deleted successfully');
   }
 
   @Get()
@@ -87,28 +88,30 @@ export class FilesController {
       Number(offset),
     );
 
-    return {
-      files: files.map((file) => new FileResponseDto(file)),
-      total,
+    const responseData = files.map((file) => new FileResponseDto(file));
+    const pagination = {
+      page: Math.floor(Number(offset) / Number(limit)) + 1,
       limit: Number(limit),
-      offset: Number(offset),
+      total,
+      totalPages: Math.ceil(total / Number(limit)),
     };
+
+    return ResponseHelper.paginated(responseData, pagination);
   }
 
   @Get('drive/status')
   async checkGoogleDriveConnection() {
     const isConnected = await this.filesService.checkGoogleDriveConnection();
-    return {
+    const responseData = {
       connected: isConnected,
       status: isConnected ? 'Connected' : 'Disconnected',
     };
+    return ResponseHelper.success(responseData);
   }
 
   @Get('drive/folder-info')
   async getGoogleDriveFolderInfo() {
     const folderInfo = await this.filesService.getGoogleDriveFolderInfo();
-    return {
-      folder: folderInfo,
-    };
+    return ResponseHelper.success({ folder: folderInfo });
   }
 }

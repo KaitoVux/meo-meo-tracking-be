@@ -5,7 +5,6 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import { User } from '../../entities/user.entity';
 import { AuditContext } from '../services/audit-context.service';
 

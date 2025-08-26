@@ -229,7 +229,7 @@
     "indexes": [],
     "uniques": [],
     "className": "Expense",
-    "path": "./dist/entities/expense.entity.js",
+    "path": "./dist/src/entities/expense.entity.js",
     "name": "Expense",
     "abstract": false,
     "internal": true,
@@ -239,7 +239,7 @@
     "useCache": true,
     "collection": "expense"
   },
-  "origin": "./dist/entities/expense.entity.js",
+  "origin": "./dist/src/entities/expense.entity.js",
   "hash": "ede85e64a3e6db484e1aa163fd17030b",
   "version": "6.4.16"
 }

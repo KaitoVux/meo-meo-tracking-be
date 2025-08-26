@@ -150,7 +150,10 @@ describe('VendorService', () => {
 
       const result = await service.update(mockVendor.id, updateVendorDto);
 
-      expect(repository.assign).toHaveBeenCalledWith(mockVendor, updateVendorDto);
+      expect(repository.assign).toHaveBeenCalledWith(
+        mockVendor,
+        updateVendorDto,
+      );
       expect(repository.persistAndFlush).toHaveBeenCalledWith(mockVendor);
       expect(result).toEqual(mockVendor);
     });

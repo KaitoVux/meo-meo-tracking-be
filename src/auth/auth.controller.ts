@@ -18,6 +18,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { CurrentUser } from './decorators/user.decorator';
 import { Roles } from './decorators/roles.decorator';
 import { User, UserRole } from '../entities/user.entity';
+import { ResponseHelper } from '../common/decorators/api-response.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -25,21 +26,23 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+    const user = await this.authService.register(createUserDto);
+    return ResponseHelper.created(user, 'User registered successfully');
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto, @CurrentUser() _user: User) {
-    return this.authService.login(loginDto);
+    const result = await this.authService.login(loginDto);
+    return ResponseHelper.success(result, 'Login successful');
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@CurrentUser() user: User) {
     const { password: _password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return ResponseHelper.success(userWithoutPassword);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -48,13 +51,20 @@ export class AuthController {
     @CurrentUser() user: User,
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    return this.authService.updateProfile(user.id, updateProfileDto);
+    const updatedUser = await this.authService.updateProfile(
+      user.id,
+      updateProfileDto,
+    );
+    return ResponseHelper.updated(updatedUser, 'Profile updated successfully');
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ACCOUNTANT)
   @Get('admin-only')
   async adminOnlyEndpoint() {
-    return { message: 'This endpoint is only accessible by accountants' };
+    return ResponseHelper.success(
+      { access: 'granted' },
+      'This endpoint is only accessible by accountants',
+    );
   }
 }

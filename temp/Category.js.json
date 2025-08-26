@@ -57,7 +57,7 @@
     "indexes": [],
     "uniques": [],
     "className": "Category",
-    "path": "./dist/entities/category.entity.js",
+    "path": "./dist/src/entities/category.entity.js",
     "name": "Category",
     "abstract": false,
     "internal": true,
@@ -67,7 +67,7 @@
     "useCache": true,
     "collection": "category"
   },
-  "origin": "./dist/entities/category.entity.js",
+  "origin": "./dist/src/entities/category.entity.js",
   "hash": "306f7115347ea20a498f4552068e3e69",
   "version": "6.4.16"
 }

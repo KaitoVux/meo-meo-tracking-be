@@ -40,29 +40,11 @@ export class CategoryService {
       );
     }
 
-    // Validate parent category exists if provided
-    let parentCategory: Category | undefined;
-    if (createCategoryDto.parentId) {
-      const foundParent = await this.em.findOne(Category, {
-        id: createCategoryDto.parentId,
-      });
-      if (!foundParent) {
-        throw new NotFoundException(
-          `Parent category with ID '${createCategoryDto.parentId}' not found`,
-        );
-      }
-      if (!foundParent.isActive) {
-        throw new BadRequestException('Cannot assign inactive parent category');
-      }
-      parentCategory = foundParent;
-    }
-
     const category = new Category();
     category.name = createCategoryDto.name;
     category.code = createCategoryDto.code;
     category.description = createCategoryDto.description;
     category.isActive = createCategoryDto.isActive ?? true;
-    category.parent = parentCategory;
     category.createdBy = userId;
     category.updatedBy = userId;
 
@@ -78,7 +60,6 @@ export class CategoryService {
     }
 
     const categories = await this.em.find(Category, filter, {
-      populate: ['parent', 'children'],
       orderBy: { name: 'ASC' },
     });
 
@@ -89,13 +70,7 @@ export class CategoryService {
   }
 
   async findOne(id: string): Promise<CategoryResponseDto> {
-    const category = await this.em.findOne(
-      Category,
-      { id },
-      {
-        populate: ['parent', 'children'],
-      },
-    );
+    const category = await this.em.findOne(Category, { id });
 
     if (!category) {
       throw new NotFoundException(`Category with ID '${id}' not found`);
@@ -143,45 +118,6 @@ export class CategoryService {
       }
     }
 
-    // Validate parent category if provided
-    if (updateCategoryDto.parentId !== undefined) {
-      if (updateCategoryDto.parentId) {
-        // Prevent self-reference
-        if (updateCategoryDto.parentId === id) {
-          throw new BadRequestException('Category cannot be its own parent');
-        }
-
-        // Prevent circular references
-        if (
-          await this.wouldCreateCircularReference(
-            id,
-            updateCategoryDto.parentId,
-          )
-        ) {
-          throw new BadRequestException(
-            'This would create a circular reference',
-          );
-        }
-
-        const parentCategory = await this.em.findOne(Category, {
-          id: updateCategoryDto.parentId,
-        });
-        if (!parentCategory) {
-          throw new NotFoundException(
-            `Parent category with ID '${updateCategoryDto.parentId}' not found`,
-          );
-        }
-        if (!parentCategory.isActive) {
-          throw new BadRequestException(
-            'Cannot assign inactive parent category',
-          );
-        }
-        category.parent = parentCategory;
-      } else {
-        category.parent = undefined;
-      }
-    }
-
     // Update other fields
     if (updateCategoryDto.name !== undefined) {
       category.name = updateCategoryDto.name;
@@ -205,23 +141,10 @@ export class CategoryService {
   }
 
   async remove(id: string, userId: string): Promise<void> {
-    const category = await this.em.findOne(
-      Category,
-      { id },
-      {
-        populate: ['children', 'expenses'],
-      },
-    );
+    const category = await this.em.findOne(Category, { id });
 
     if (!category) {
       throw new NotFoundException(`Category with ID '${id}' not found`);
-    }
-
-    // Check if category has children
-    if (category.children.length > 0) {
-      throw new BadRequestException(
-        'Cannot delete category that has child categories',
-      );
     }
 
     // Check if category is used by expenses
@@ -243,28 +166,10 @@ export class CategoryService {
     updateStatusDto: UpdateCategoryStatusDto,
     userId: string,
   ): Promise<CategoryResponseDto> {
-    const category = await this.em.findOne(
-      Category,
-      { id },
-      {
-        populate: ['children'],
-      },
-    );
+    const category = await this.em.findOne(Category, { id });
 
     if (!category) {
       throw new NotFoundException(`Category with ID '${id}' not found`);
-    }
-
-    // If deactivating, check if it has active children
-    if (!updateStatusDto.isActive && category.children.length > 0) {
-      const activeChildren = category.children
-        .getItems()
-        .filter((child) => child.isActive);
-      if (activeChildren.length > 0) {
-        throw new BadRequestException(
-          'Cannot deactivate category that has active child categories',
-        );
-      }
     }
 
     category.isActive = updateStatusDto.isActive;
@@ -339,39 +244,5 @@ export class CategoryService {
       categoriesWithExpenses,
       mostUsedCategory,
     };
-  }
-
-  private async wouldCreateCircularReference(
-    categoryId: string,
-    potentialParentId: string,
-  ): Promise<boolean> {
-    // Check if the potential parent is a descendant of the current category
-    const descendants = await this.getDescendants(categoryId);
-    return descendants.some(
-      (descendant) => descendant.id === potentialParentId,
-    );
-  }
-
-  private async getDescendants(categoryId: string): Promise<Category[]> {
-    const category = await this.em.findOne(
-      Category,
-      { id: categoryId },
-      {
-        populate: ['children'],
-      },
-    );
-
-    if (!category || category.children.length === 0) {
-      return [];
-    }
-
-    const descendants: Category[] = [];
-    for (const child of category.children.getItems()) {
-      descendants.push(child);
-      const childDescendants = await this.getDescendants(child.id);
-      descendants.push(...childDescendants);
-    }
-
-    return descendants;
   }
 }

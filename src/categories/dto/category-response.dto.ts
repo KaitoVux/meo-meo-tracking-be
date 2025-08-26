@@ -6,9 +6,6 @@ export class CategoryResponseDto {
   code: string;
   description?: string;
   isActive: boolean;
-  parentId?: string;
-  parent?: CategoryResponseDto;
-  children?: CategoryResponseDto[];
   usageCount?: number;
   createdAt: Date;
   updatedAt: Date;
@@ -25,15 +22,6 @@ export class CategoryResponseDto {
     dto.code = category.code;
     dto.description = category.description;
     dto.isActive = category.isActive;
-    dto.parentId = category.parent?.id;
-    dto.parent = category.parent
-      ? CategoryResponseDto.fromEntity(category.parent)
-      : undefined;
-    dto.children = category.children?.isInitialized()
-      ? category.children
-          .getItems()
-          .map((child) => CategoryResponseDto.fromEntity(child))
-      : undefined;
     dto.usageCount = usageCount;
     dto.createdAt = category.createdAt;
     dto.updatedAt = category.updatedAt;

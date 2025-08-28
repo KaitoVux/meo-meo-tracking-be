@@ -1,11 +1,10 @@
 import {
   EventSubscriber,
   FlushEventArgs,
-  EntityManager,
+  ChangeSetType,
 } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { BaseEntity } from '../../entities/base.entity';
-import { User } from '../../entities/user.entity';
 import { AuditContext } from '../services/audit-context.service';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class AuditSubscriber implements EventSubscriber {
 
   async onFlush(args: FlushEventArgs): Promise<void> {
     const currentUser = this.auditContext.getCurrentUser();
-    
+
     if (!currentUser) {
       // No user context available (e.g., system operations, migrations, seeders)
       return;
@@ -30,13 +29,13 @@ export class AuditSubscriber implements EventSubscriber {
       }
 
       switch (changeSet.type) {
-        case 'create':
+        case ChangeSetType.CREATE:
           entity.createdBy = currentUser;
           entity.updatedBy = currentUser;
           break;
-        case 'update':
+        case ChangeSetType.UPDATE:
           entity.updatedBy = currentUser;
-          
+
           // Handle soft deletes - if deletedAt was set and deletedBy is not set
           if (entity.deletedAt && !entity.deletedBy) {
             entity.deletedBy = currentUser;

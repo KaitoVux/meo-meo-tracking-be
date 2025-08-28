@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { EntityManager, QueryOrder } from '@mikro-orm/core';
 import { Vendor, VendorStatus } from '../entities/vendor.entity';
 import { CreateVendorDto } from './dto/create-vendor.dto';
@@ -7,9 +11,7 @@ import { VendorQueryDto } from './dto/vendor-query.dto';
 
 @Injectable()
 export class VendorService {
-  constructor(
-    private readonly em: EntityManager,
-  ) {}
+  constructor(private readonly em: EntityManager) {}
 
   async create(createVendorDto: CreateVendorDto): Promise<Vendor> {
     // Check if vendor with same name already exists
@@ -38,7 +40,14 @@ export class VendorService {
     page: number;
     limit: number;
   }> {
-    const { search, status, page = 1, limit = 100, sortBy = 'name', sortOrder = 'ASC' } = query;
+    const {
+      search,
+      status,
+      page = 1,
+      limit = 100,
+      sortBy = 'name',
+      sortOrder = 'ASC',
+    } = query;
 
     const where: any = { deletedAt: null };
 
@@ -110,17 +119,24 @@ export class VendorService {
 
   async toggleStatus(id: string): Promise<Vendor> {
     const vendor = await this.findOne(id);
-    vendor.status = vendor.status === VendorStatus.ACTIVE ? VendorStatus.INACTIVE : VendorStatus.ACTIVE;
+    vendor.status =
+      vendor.status === VendorStatus.ACTIVE
+        ? VendorStatus.INACTIVE
+        : VendorStatus.ACTIVE;
     await this.em.persistAndFlush(vendor);
     return vendor;
   }
 
   async getActiveVendors(): Promise<Vendor[]> {
-    return this.em.find(Vendor, {
-      status: VendorStatus.ACTIVE,
-      deletedAt: null,
-    }, {
-      orderBy: { name: QueryOrder.ASC },
-    });
+    return this.em.find(
+      Vendor,
+      {
+        status: VendorStatus.ACTIVE,
+        deletedAt: null,
+      },
+      {
+        orderBy: { name: QueryOrder.ASC },
+      },
+    );
   }
 }

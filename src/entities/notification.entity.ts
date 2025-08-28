@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Property,
-  ManyToOne,
-  Enum,
-  Index,
-} from '@mikro-orm/core';
+import { Entity, Property, ManyToOne, Enum, Index } from '@mikro-orm/core';
 import { User } from './user.entity';
 import { Expense } from './expense.entity';
 import { BaseEntity } from './base.entity';

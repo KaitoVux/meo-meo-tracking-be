@@ -21,18 +21,7 @@ describe('Category Entity', () => {
     expect(category.updatedAt).toBeInstanceOf(Date);
   });
 
-  it('should allow setting parent category', () => {
-    const parentCategory = new Category();
-    parentCategory.name = 'Parent';
-    parentCategory.code = 'PARENT';
-
-    category.parent = parentCategory;
-    expect(category.parent).toBe(parentCategory);
-  });
-
-  it('should have children and expenses collections initialized', () => {
-    expect(category.children).toBeDefined();
-    expect(category.children.length).toBe(0);
+  it('should have expenses collection initialized', () => {
     expect(category.expenses).toBeDefined();
     expect(category.expenses.length).toBe(0);
   });

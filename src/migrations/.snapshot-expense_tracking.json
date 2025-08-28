@@ -470,15 +470,6 @@
           "nullable": false,
           "default": "true",
           "mappedType": "boolean"
-        },
-        "parent_id": {
-          "name": "parent_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
         }
       },
       "name": "category",
@@ -527,15 +518,6 @@
           "localTableName": "public.category",
           "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
-          "deleteRule": "set null",
-          "updateRule": "cascade"
-        },
-        "category_parent_id_foreign": {
-          "constraintName": "category_parent_id_foreign",
-          "columnNames": ["parent_id"],
-          "localTableName": "public.category",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.category",
           "deleteRule": "set null",
           "updateRule": "cascade"
         }

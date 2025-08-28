@@ -4,7 +4,6 @@ import {
   IsBoolean,
   Length,
   Matches,
-  IsUUID,
 } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -32,8 +31,4 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean = true;
-
-  @IsOptional()
-  @IsUUID(4, { message: 'Parent ID must be a valid UUID' })
-  parentId?: string;
 }

@@ -13,7 +13,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { CurrentUser } from './decorators/user.decorator';
 import { Roles } from './decorators/roles.decorator';
@@ -30,7 +29,6 @@ export class AuthController {
     return ResponseHelper.created(user, 'User registered successfully');
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto, @CurrentUser() _user: User) {

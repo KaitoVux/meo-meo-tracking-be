@@ -30,13 +30,13 @@ export class ReminderService {
     );
 
     // Schedule follow-up reminders if needed
-    await this.scheduleFollowUpReminders(expense);
+    this.scheduleFollowUpReminders(expense);
   }
 
   /**
    * Schedules follow-up reminders for invoice collection
    */
-  private async scheduleFollowUpReminders(expense: Expense): Promise<void> {
+  private scheduleFollowUpReminders(expense: Expense): void {
     // In a real implementation, this would use a job queue or scheduler
     // For now, we'll create immediate reminders with different priorities
 

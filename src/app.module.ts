@@ -9,6 +9,7 @@ import { FilesModule } from './files/files.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CategoryModule } from './categories/category.module';
 import { VendorModule } from './vendors/vendor.module';
+import { ReportsModule } from './reports/reports.module';
 import { CommonModule } from './common/common.module';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import config from './mikro-orm.config';
@@ -23,6 +24,7 @@ import config from './mikro-orm.config';
     NotificationsModule,
     CategoryModule,
     VendorModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

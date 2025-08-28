@@ -206,7 +206,7 @@ export class CategoryService {
     return usageMap;
   }
 
-  async getUsageStatistics(categoryId?: string): Promise<{
+  async getUsageStatistics(_categoryId?: string): Promise<{
     totalCategories: number;
     activeCategories: number;
     inactiveCategories: number;

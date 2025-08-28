@@ -22,12 +22,28 @@ describe('ExpenseWorkflowService', () => {
       flush: jest.fn(),
     };
 
+    const mockNotificationService = {
+      notifyStatusChange: jest.fn(),
+    };
+
+    const mockReminderService = {
+      createInvoiceCollectionReminder: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ExpenseWorkflowService,
         {
           provide: EntityManager,
           useValue: mockEntityManager,
+        },
+        {
+          provide: 'NotificationService',
+          useValue: mockNotificationService,
+        },
+        {
+          provide: 'ReminderService',
+          useValue: mockReminderService,
         },
       ],
     }).compile();

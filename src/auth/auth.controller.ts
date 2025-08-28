@@ -40,7 +40,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async getProfile(@CurrentUser() user: User) {
+  getProfile(@CurrentUser() user: User) {
     const { password: _password, ...userWithoutPassword } = user;
     return ResponseHelper.success(userWithoutPassword);
   }
@@ -61,7 +61,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ACCOUNTANT)
   @Get('admin-only')
-  async adminOnlyEndpoint() {
+  adminOnlyEndpoint() {
     return ResponseHelper.success(
       { access: 'granted' },
       'This endpoint is only accessible by accountants',

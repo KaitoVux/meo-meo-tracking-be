@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import {
   ExpenseValidationService,
@@ -37,7 +37,7 @@ export class ValidationNotificationService {
 
       // Also notify accountants if expense is in submitted status
       if (expense.status === ExpenseStatus.SUBMITTED) {
-        await this.notifyAccountantsOfValidationIssues(
+        this.notifyAccountantsOfValidationIssues(
           expense,
           validationResult.missingFields,
         );
@@ -50,10 +50,10 @@ export class ValidationNotificationService {
   /**
    * Sends validation notifications to accountants
    */
-  private async notifyAccountantsOfValidationIssues(
+  private notifyAccountantsOfValidationIssues(
     expense: Expense,
     missingFields: string[],
-  ): Promise<void> {
+  ): void {
     // This would typically query for users with accountant role
     // For now, we'll create a placeholder implementation
     const message = `Expense ${expense.paymentId} has validation issues. Missing fields: ${missingFields.join(', ')}`;

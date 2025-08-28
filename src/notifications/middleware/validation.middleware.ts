@@ -8,7 +8,7 @@ export class ValidationMiddleware implements NestMiddleware {
     private readonly validationNotificationService: ValidationNotificationService,
   ) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, res: Response, next: NextFunction) {
     // Add validation context to request for expense operations
     if (
       req.method === 'POST' ||

@@ -5,6 +5,7 @@ import {
   Notification,
   NotificationType,
   NotificationPriority,
+  NotificationStatus,
 } from '../../entities/notification.entity';
 import { User } from '../../entities/user.entity';
 import { Expense } from '../../entities/expense.entity';
@@ -117,7 +118,7 @@ describe('NotificationService', () => {
       expect(result.total).toBe(2);
       expect(em.findAndCount).toHaveBeenCalledWith(
         Notification,
-        { recipient: 'user-1', isDeleted: false },
+        { recipient: 'user-1' },
         expect.objectContaining({
           populate: ['relatedExpense'],
           orderBy: { createdAt: 'DESC' },
@@ -174,8 +175,7 @@ describe('NotificationService', () => {
       expect(result).toBe(5);
       expect(em.count).toHaveBeenCalledWith(Notification, {
         recipient: 'user-1',
-        status: 'unread',
-        isDeleted: false,
+        status: NotificationStatus.UNREAD,
       });
     });
   });

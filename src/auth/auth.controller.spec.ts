@@ -103,8 +103,8 @@ describe('AuthController', () => {
   });
 
   describe('getProfile', () => {
-    it('should return user profile without password', async () => {
-      const result = await controller.getProfile(mockUser);
+    it('should return user profile without password', () => {
+      const result = controller.getProfile(mockUser);
 
       expect(result).toEqual(mockUserWithoutPassword);
       expect(result).not.toHaveProperty('password');
@@ -136,8 +136,8 @@ describe('AuthController', () => {
   });
 
   describe('adminOnlyEndpoint', () => {
-    it('should return admin message', async () => {
-      const result = await controller.adminOnlyEndpoint();
+    it('should return admin message', () => {
+      const result = controller.adminOnlyEndpoint();
 
       expect(result).toEqual({
         message: 'This endpoint is only accessible by accountants',

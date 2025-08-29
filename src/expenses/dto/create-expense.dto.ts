@@ -27,7 +27,7 @@ export class CreateExpenseDto {
   @IsNotEmpty()
   vendorId!: string;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   category!: string;
 

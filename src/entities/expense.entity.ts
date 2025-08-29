@@ -1,17 +1,17 @@
 import {
+  Collection,
   Entity,
-  Property,
+  Enum,
   ManyToOne,
   OneToMany,
-  Collection,
-  Enum,
+  Property,
 } from '@mikro-orm/core';
-import { User } from './user.entity';
-import { File } from './file.entity';
-import { Category } from './category.entity';
-import { Vendor } from './vendor.entity';
-import { ExpenseStatusHistory } from './expense-status-history.entity';
 import { BaseEntity } from './base.entity';
+import { Category } from './category.entity';
+import { ExpenseStatusHistory } from './expense-status-history.entity';
+import { File } from './file.entity';
+import { User } from './user.entity';
+import { Vendor } from './vendor.entity';
 
 export enum Currency {
   VND = 'VND',

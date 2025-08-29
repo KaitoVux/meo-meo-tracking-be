@@ -11,14 +11,14 @@ export class PaymentIdService {
    * Requirements 1.4, 1.5: Auto-increment starting from 1, sub-IDs for same vendor
    */
   async generatePaymentId(
-    vendor: string,
+    vendorId: string,
     transactionDate: Date,
   ): Promise<{ paymentId: string; subId?: string }> {
     // Check if there are existing expenses for the same vendor on the same transaction date
     const existingExpensesForVendor = await this.em.find(
       Expense,
       {
-        vendor,
+        vendor: { id: vendorId },
         transactionDate: {
           $gte: new Date(
             transactionDate.getFullYear(),

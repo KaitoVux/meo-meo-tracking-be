@@ -7,6 +7,7 @@ import { EntityManager, FilterQuery, FindOptions } from '@mikro-orm/core';
 import { Expense, ExpenseStatus } from '../../entities/expense.entity';
 import { User } from '../../entities/user.entity';
 import { Vendor } from '../../entities/vendor.entity';
+import { Category } from '../../entities/category.entity';
 import { CreateExpenseDto, UpdateExpenseDto, ExpenseQueryDto } from '../dto';
 import { ExpenseValidationService } from './expense-validation.service';
 import { PaymentIdService } from './payment-id.service';
@@ -61,10 +62,18 @@ export class ExpenseService {
       throw new BadRequestException('Vendor not found');
     }
 
+    // Verify category exists
+    const category = await this.em.findOne(Category, {
+      id: createExpenseDto.category,
+    });
+    if (!category) {
+      throw new BadRequestException('Category not found');
+    }
+
     // Generate payment ID
     const expenseTransactionDate = new Date(createExpenseDto.transactionDate);
     const { paymentId, subId } = await this.paymentIdService.generatePaymentId(
-      vendor.name,
+      vendor.id,
       expenseTransactionDate,
     );
 
@@ -75,7 +84,8 @@ export class ExpenseService {
     expense.transactionDate = expenseTransactionDate;
     expense.expenseMonth = createExpenseDto.expenseMonth;
     expense.vendor = vendor;
-    expense.category = createExpenseDto.category;
+    expense.category = category.name; // Store category name for backward compatibility
+    expense.categoryEntity = category; // Set the category relation
     expense.type = createExpenseDto.type;
     expense.amountBeforeVAT = createExpenseDto.amountBeforeVAT;
     expense.vatPercentage = createExpenseDto.vatPercentage;

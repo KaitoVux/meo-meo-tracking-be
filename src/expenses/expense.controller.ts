@@ -19,6 +19,7 @@ import {
   UpdateExpenseDto,
   UpdateExpenseStatusDto,
   ExpenseQueryDto,
+  ExpenseResponseDto,
 } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/user.decorator';
@@ -50,7 +51,7 @@ export class ExpenseController {
     const expense = await this.expenseService.create(createExpenseDto);
     return {
       success: true,
-      data: expense,
+      data: ExpenseResponseDto.fromEntity(expense),
       message: 'Expense created successfully',
     };
   }
@@ -84,13 +85,13 @@ export class ExpenseController {
     const expenses = await this.expenseService.findByPaymentId(paymentId);
     return {
       success: true,
-      data: expenses,
+      data: expenses.map((expense) => ExpenseResponseDto.fromEntity(expense)),
     };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const expense = await this.expenseService.findOne(id);
+    const expense = await this.expenseService.findOneAsDto(id);
     return {
       success: true,
       data: expense,
@@ -126,7 +127,7 @@ export class ExpenseController {
     const expense = await this.expenseService.update(id, updateExpenseDto);
     return {
       success: true,
-      data: expense,
+      data: ExpenseResponseDto.fromEntity(expense),
       message: 'Expense updated successfully',
     };
   }
@@ -145,7 +146,7 @@ export class ExpenseController {
     );
     return {
       success: true,
-      data: expense,
+      data: ExpenseResponseDto.fromEntity(expense),
       message: `Expense status updated to ${updateStatusDto.status}`,
     };
   }
@@ -175,7 +176,7 @@ export class ExpenseController {
     const expense = await this.expenseService.restore(id);
     return {
       success: true,
-      data: expense,
+      data: ExpenseResponseDto.fromEntity(expense),
       message: 'Expense restored successfully',
     };
   }

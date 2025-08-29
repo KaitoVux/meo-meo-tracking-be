@@ -8,13 +8,26 @@ import { Expense, ExpenseStatus } from '../../entities/expense.entity';
 import { User } from '../../entities/user.entity';
 import { Vendor } from '../../entities/vendor.entity';
 import { Category } from '../../entities/category.entity';
-import { CreateExpenseDto, UpdateExpenseDto, ExpenseQueryDto } from '../dto';
+import {
+  CreateExpenseDto,
+  UpdateExpenseDto,
+  ExpenseQueryDto,
+  ExpenseResponseDto,
+} from '../dto';
 import { ExpenseValidationService } from './expense-validation.service';
 import { PaymentIdService } from './payment-id.service';
 import { ExpenseWorkflowService } from './expense-workflow.service';
 
 export interface PaginatedResult<T> {
   data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedExpenseResult {
+  data: ExpenseResponseDto[];
   total: number;
   page: number;
   limit: number;
@@ -115,7 +128,7 @@ export class ExpenseService {
    * Finds expenses with pagination and filtering
    * Requirement 3.7: 100 records per page limit
    */
-  async findAll(query: ExpenseQueryDto): Promise<PaginatedResult<Expense>> {
+  async findAll(query: ExpenseQueryDto): Promise<PaginatedExpenseResult> {
     const page = parseInt(query.page || '1');
     const limit = Math.min(parseInt(query.limit || '100'), 100); // Enforce 100 record limit
     const offset = (page - 1) * limit;
@@ -163,14 +176,14 @@ export class ExpenseService {
     }
 
     const [expenses, total] = await this.em.findAndCount(Expense, where, {
-      populate: ['submitter', 'invoiceFile'],
+      populate: ['submitter', 'vendor', 'categoryEntity', 'invoiceFile'],
       orderBy: { createdAt: 'DESC' },
       limit,
       offset,
     });
 
     return {
-      data: expenses,
+      data: expenses.map((expense) => ExpenseResponseDto.fromEntity(expense)),
       total,
       page,
       limit,
@@ -185,6 +198,8 @@ export class ExpenseService {
     const options: FindOptions<Expense> = {
       populate: [
         'submitter',
+        'vendor',
+        'categoryEntity',
         'invoiceFile',
         'statusHistory',
         'statusHistory.changedBy',
@@ -203,6 +218,17 @@ export class ExpenseService {
     }
 
     return expense;
+  }
+
+  /**
+   * Finds a single expense by ID and returns response DTO
+   */
+  async findOneAsDto(
+    id: string,
+    includeDeleted = false,
+  ): Promise<ExpenseResponseDto> {
+    const expense = await this.findOne(id, includeDeleted);
+    return ExpenseResponseDto.fromEntity(expense);
   }
 
   /**
@@ -391,7 +417,7 @@ export class ExpenseService {
   /**
    * Finds all soft-deleted expenses with pagination
    */
-  async findDeleted(query: ExpenseQueryDto): Promise<PaginatedResult<Expense>> {
+  async findDeleted(query: ExpenseQueryDto): Promise<PaginatedExpenseResult> {
     const page = parseInt(query.page || '1');
     const limit = Math.min(parseInt(query.limit || '100'), 100);
     const offset = (page - 1) * limit;
@@ -418,7 +444,7 @@ export class ExpenseService {
     }
 
     const [expenses, total] = await this.em.findAndCount(Expense, where, {
-      populate: ['submitter', 'invoiceFile'],
+      populate: ['submitter', 'vendor', 'categoryEntity', 'invoiceFile'],
       orderBy: { deletedAt: 'DESC' },
       limit,
       offset,
@@ -426,7 +452,7 @@ export class ExpenseService {
     });
 
     return {
-      data: expenses,
+      data: expenses.map((expense) => ExpenseResponseDto.fromEntity(expense)),
       total,
       page,
       limit,

@@ -103,17 +103,20 @@ export class Expense extends BaseEntity {
   @Enum(() => ExpenseStatus)
   status: ExpenseStatus = ExpenseStatus.DRAFT;
 
-  // Relations
-  @ManyToOne(() => User)
+  // Relations with explicit foreign key field names
+  @ManyToOne(() => User, { fieldName: 'submitter_id' })
   submitter!: User;
 
-  @ManyToOne(() => Vendor)
+  @ManyToOne(() => Vendor, { fieldName: 'vendor_id' })
   vendor!: Vendor;
 
-  @ManyToOne(() => File, { nullable: true })
+  @ManyToOne(() => File, { nullable: true, fieldName: 'invoice_file_id' })
   invoiceFile?: File;
 
-  @ManyToOne(() => Category, { nullable: true })
+  @ManyToOne(() => Category, {
+    nullable: true,
+    fieldName: 'category_entity_id',
+  })
   categoryEntity?: Category;
 
   @OneToMany(() => ExpenseStatusHistory, (history) => history.expense)

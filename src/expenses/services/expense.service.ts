@@ -268,6 +268,15 @@ export class ExpenseService {
     if (updateExpenseDto.category) {
       expense.category = updateExpenseDto.category;
     }
+    if (updateExpenseDto.amountBeforeVAT !== undefined) {
+      expense.amountBeforeVAT = updateExpenseDto.amountBeforeVAT;
+    }
+    if (updateExpenseDto.vatPercentage !== undefined) {
+      expense.vatPercentage = updateExpenseDto.vatPercentage;
+    }
+    if (updateExpenseDto.vatAmount !== undefined) {
+      expense.vatAmount = updateExpenseDto.vatAmount;
+    }
     if (updateExpenseDto.amount !== undefined) {
       expense.amount = updateExpenseDto.amount;
     }

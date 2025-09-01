@@ -32,9 +32,11 @@ export class AuditSubscriber implements EventSubscriber {
         case ChangeSetType.CREATE:
           entity.createdBy = currentUser;
           entity.updatedBy = currentUser;
+          args.uow.recomputeSingleChangeSet(entity);
           break;
         case ChangeSetType.UPDATE:
           entity.updatedBy = currentUser;
+          args.uow.recomputeSingleChangeSet(entity);
 
           // Handle soft deletes - if deletedAt was set and deletedBy is not set
           if (entity.deletedAt && !entity.deletedBy) {

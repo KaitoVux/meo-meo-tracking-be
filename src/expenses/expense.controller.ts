@@ -123,6 +123,7 @@ export class ExpenseController {
   async update(
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
     const expense = await this.expenseService.update(id, updateExpenseDto);
     return {

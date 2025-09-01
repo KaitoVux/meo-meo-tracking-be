@@ -17,6 +17,7 @@ import {
 import { ExpenseValidationService } from './expense-validation.service';
 import { PaymentIdService } from './payment-id.service';
 import { ExpenseWorkflowService } from './expense-workflow.service';
+import { AuditContext } from '../../common/services/audit-context.service';
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -47,6 +48,7 @@ export class ExpenseService {
     private readonly validationService: ExpenseValidationService,
     private readonly paymentIdService: PaymentIdService,
     private readonly workflowService: ExpenseWorkflowService,
+    private readonly auditContext: AuditContext,
   ) {}
 
   /**
@@ -101,7 +103,7 @@ export class ExpenseService {
     expense.categoryEntity = category; // Set the category relation
     expense.type = createExpenseDto.type;
     expense.amountBeforeVAT = createExpenseDto.amountBeforeVAT;
-    expense.vatPercentage = createExpenseDto.vatPercentage;
+    expense.vatPercentage = createExpenseDto.vatPercentage ?? 0;
     expense.vatAmount = createExpenseDto.vatAmount;
     expense.amount = createExpenseDto.amount;
     expense.currency = createExpenseDto.currency;
@@ -256,6 +258,12 @@ export class ExpenseService {
     if (updateExpenseDto.transactionDate) {
       expense.transactionDate = new Date(updateExpenseDto.transactionDate);
     }
+    if (updateExpenseDto.expenseMonth) {
+      expense.expenseMonth = updateExpenseDto.expenseMonth;
+    }
+    if (updateExpenseDto.type) {
+      expense.type = updateExpenseDto.type;
+    }
     if (updateExpenseDto.vendorId) {
       const vendor = await this.em.findOne(Vendor, {
         id: updateExpenseDto.vendorId,
@@ -272,7 +280,8 @@ export class ExpenseService {
       expense.amountBeforeVAT = updateExpenseDto.amountBeforeVAT;
     }
     if (updateExpenseDto.vatPercentage !== undefined) {
-      expense.vatPercentage = updateExpenseDto.vatPercentage;
+      // Allow clearing VAT percentage by setting to null or 0
+      expense.vatPercentage = updateExpenseDto.vatPercentage ?? 0;
     }
     if (updateExpenseDto.vatAmount !== undefined) {
       expense.vatAmount = updateExpenseDto.vatAmount;
@@ -296,7 +305,26 @@ export class ExpenseService {
       expense.paymentMethod = updateExpenseDto.paymentMethod;
     }
 
-    expense.updatedAt = new Date();
+    // Recalculate total amount if VAT-related fields are updated
+    if (
+      updateExpenseDto.amountBeforeVAT !== undefined ||
+      updateExpenseDto.vatPercentage !== undefined ||
+      updateExpenseDto.vatAmount !== undefined
+    ) {
+      // Handle null/undefined/0 VAT percentage - total amount equals amount before VAT
+      if (!expense.vatPercentage || expense.vatPercentage === 0) {
+        expense.amount = expense.amountBeforeVAT;
+        expense.vatAmount = 0;
+      } else {
+        // Calculate VAT amount if not explicitly provided
+        if (updateExpenseDto.vatAmount === undefined) {
+          expense.vatAmount =
+            (expense.amountBeforeVAT * expense.vatPercentage) / 100;
+        }
+        // Calculate total amount
+        expense.amount = expense.amountBeforeVAT + (expense.vatAmount ?? 0);
+      }
+    }
 
     await this.em.flush();
     return expense;

@@ -23,6 +23,10 @@ import {
     ValidationExceptionFilter,
     {
       provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
     {
@@ -55,7 +59,6 @@ export class CommonModule implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    // Register the audit subscriber with MikroORM
     this.em.getEventManager().registerSubscriber(this.auditSubscriber);
   }
 }

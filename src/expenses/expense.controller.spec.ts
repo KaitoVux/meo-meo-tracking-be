@@ -242,7 +242,9 @@ describe('ExpenseController', () => {
 
       expenseService.update.mockResolvedValue(expense);
 
-      const result = await controller.update('expense-123', updateDto);
+      const user = { id: 'user-123', email: 'test@example.com' };
+
+      const result = await controller.update('expense-123', updateDto, user);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(expense);

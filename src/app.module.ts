@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,7 +10,7 @@ import { CategoryModule } from './categories/category.module';
 import { VendorModule } from './vendors/vendor.module';
 import { ReportsModule } from './reports/reports.module';
 import { CommonModule } from './common/common.module';
-import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+
 import config from './mikro-orm.config';
 
 @Module({
@@ -27,12 +26,6 @@ import config from './mikro-orm.config';
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: AuditInterceptor,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

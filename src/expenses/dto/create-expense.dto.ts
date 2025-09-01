@@ -13,6 +13,7 @@ import {
   PaymentMethod,
   ExpenseType,
 } from '../../entities/expense.entity';
+import { Transform } from 'class-transformer';
 
 export class CreateExpenseDto {
   @IsDateString()
@@ -41,7 +42,8 @@ export class CreateExpenseDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  vatPercentage?: number;
+  @Transform(({ value }) => (value === null ? null : value))
+  vatPercentage?: number | null;
 
   @IsOptional()
   @IsNumber()

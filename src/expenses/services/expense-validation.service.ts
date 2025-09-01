@@ -90,12 +90,13 @@ export class ExpenseValidationService {
       errors.push('Amount must be greater than 0');
     }
 
+    // Only require exchange rate when currency is being set to USD and no existing rate
     if (
       dto.currency === Currency.USD &&
-      !dto.exchangeRate &&
+      dto.exchangeRate === undefined &&
       !existingExpense.exchangeRate
     ) {
-      errors.push('Exchange rate is required for USD currency');
+      errors.push('Exchange rate is required when setting currency to USD');
     }
 
     if (dto.transactionDate) {

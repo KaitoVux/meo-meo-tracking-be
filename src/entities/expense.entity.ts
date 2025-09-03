@@ -19,8 +19,9 @@ export enum Currency {
 }
 
 export enum PaymentMethod {
-  CASH = 'CASH',
   BANK_TRANSFER = 'BANK_TRANSFER',
+  PETTY_CASH = 'PETTY_CASH',
+  CREDIT_CARD = 'CREDIT_CARD',
 }
 
 export enum ExpenseType {

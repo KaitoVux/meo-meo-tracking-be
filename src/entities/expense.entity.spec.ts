@@ -24,7 +24,7 @@ describe('Expense Entity', () => {
     expense.category = 'TRAVEL';
     expense.amount = 100.5;
     expense.description = 'Business travel expense';
-    expense.paymentMethod = PaymentMethod.CASH;
+    expense.paymentMethod = PaymentMethod.PETTY_CASH;
     expense.submitter = user;
 
     expect(expense.id).toBeDefined();
@@ -35,7 +35,7 @@ describe('Expense Entity', () => {
     expect(expense.amount).toBe(100.5);
     expect(expense.currency).toBe(Currency.VND);
     expect(expense.description).toBe('Business travel expense');
-    expect(expense.paymentMethod).toBe(PaymentMethod.CASH);
+    expect(expense.paymentMethod).toBe(PaymentMethod.PETTY_CASH);
     expect(expense.status).toBe(ExpenseStatus.DRAFT);
     expect(expense.createdAt).toBeInstanceOf(Date);
     expect(expense.updatedAt).toBeInstanceOf(Date);

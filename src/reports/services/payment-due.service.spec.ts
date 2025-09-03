@@ -59,7 +59,7 @@ describe('PaymentDueService', () => {
       amount: 200000,
       currency: Currency.VND,
       description: 'Monthly expense',
-      paymentMethod: PaymentMethod.CASH,
+      paymentMethod: PaymentMethod.PETTY_CASH,
       status: ExpenseStatus.APPROVED,
       submitter: mockUser,
       vendor: mockVendor,

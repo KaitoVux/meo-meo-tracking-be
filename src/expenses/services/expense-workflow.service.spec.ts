@@ -75,36 +75,43 @@ describe('ExpenseWorkflowService', () => {
       user.name = 'Test User';
     });
 
-    it('should update status from DRAFT to SUBMITTED', async () => {
-      entityManager.findOne
+    it('should update status from DRAFT to IN_PROGRESS', async () => {
+      const user = {
+        id: 'user-id',
+        firstName: 'Test',
+        lastName: 'User',
+      } as User;
+      jest
+        .spyOn(em, 'findOne')
         .mockResolvedValueOnce(expense)
         .mockResolvedValueOnce(user);
 
       const result = await service.updateExpenseStatus(
-        'expense-123',
-        ExpenseStatus.SUBMITTED,
-        'user-123',
-        'Ready for review',
+        'expense-id',
+        ExpenseStatus.IN_PROGRESS,
+        'user-id',
       );
 
-      expect(result.status).toBe(ExpenseStatus.SUBMITTED);
-      expect(entityManager.persist).toHaveBeenCalled();
-      expect(entityManager.flush).toHaveBeenCalled();
+      expect(result.status).toBe(ExpenseStatus.IN_PROGRESS);
+      expect(em.persist).toHaveBeenCalled();
+      expect(em.flush).toHaveBeenCalled();
     });
 
     it('should throw error for invalid status transition', async () => {
-      expense.status = ExpenseStatus.DRAFT;
-      entityManager.findOne
+      expense.status = ExpenseStatus.PAID;
+      const user = { id: 'user-id' } as User;
+      jest
+        .spyOn(em, 'findOne')
         .mockResolvedValueOnce(expense)
         .mockResolvedValueOnce(user);
 
       await expect(
         service.updateExpenseStatus(
-          'expense-123',
-          ExpenseStatus.PAID,
-          'user-123',
+          'expense-id',
+          ExpenseStatus.DRAFT,
+          'user-id',
         ),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow('Cannot change status of paid expenses');
     });
 
     it('should throw error when expense not found', async () => {
@@ -149,7 +156,7 @@ describe('ExpenseWorkflowService', () => {
     });
 
     it('should throw error for same status transition', async () => {
-      expense.status = ExpenseStatus.SUBMITTED;
+      expense.status = ExpenseStatus.IN_PROGRESS;
       entityManager.findOne
         .mockResolvedValueOnce(expense)
         .mockResolvedValueOnce(user);
@@ -167,34 +174,41 @@ describe('ExpenseWorkflowService', () => {
   describe('getAvailableTransitions', () => {
     it('should return available transitions for DRAFT status', () => {
       const transitions = service.getAvailableTransitions(ExpenseStatus.DRAFT);
-      expect(transitions).toContain(ExpenseStatus.SUBMITTED);
+      expect(transitions).toEqual([
+        ExpenseStatus.IN_PROGRESS,
+        ExpenseStatus.ON_HOLD,
+      ]);
     });
 
-    it('should return available transitions for SUBMITTED status', () => {
+    it('should return available transitions for IN_PROGRESS status', () => {
       const transitions = service.getAvailableTransitions(
-        ExpenseStatus.SUBMITTED,
+        ExpenseStatus.IN_PROGRESS,
       );
-      expect(transitions).toContain(ExpenseStatus.APPROVED);
-      expect(transitions).toContain(ExpenseStatus.DRAFT);
+      expect(transitions).toEqual([
+        ExpenseStatus.DRAFT,
+        ExpenseStatus.PAID,
+        ExpenseStatus.ON_HOLD,
+      ]);
     });
 
-    it('should return available transitions for APPROVED status', () => {
+    it('should return available transitions for ON_HOLD status', () => {
       const transitions = service.getAvailableTransitions(
-        ExpenseStatus.APPROVED,
+        ExpenseStatus.ON_HOLD,
       );
-      expect(transitions).toContain(ExpenseStatus.PAID);
-      expect(transitions).toContain(ExpenseStatus.SUBMITTED);
+      expect(transitions).toEqual([
+        ExpenseStatus.DRAFT,
+        ExpenseStatus.IN_PROGRESS,
+      ]);
     });
 
     it('should return available transitions for PAID status', () => {
       const transitions = service.getAvailableTransitions(ExpenseStatus.PAID);
-      expect(transitions).toContain(ExpenseStatus.CLOSED);
-      expect(transitions).toContain(ExpenseStatus.APPROVED);
+      expect(transitions).toEqual([]);
     });
 
-    it('should return empty array for CLOSED status', () => {
-      const transitions = service.getAvailableTransitions(ExpenseStatus.CLOSED);
-      expect(transitions).toHaveLength(0);
+    it('should return empty array for PAID status (final state)', () => {
+      const transitions = service.getAvailableTransitions(ExpenseStatus.PAID);
+      expect(transitions).toEqual([]);
     });
   });
 

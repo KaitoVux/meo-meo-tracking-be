@@ -176,7 +176,7 @@ export class ReminderService {
    * Creates reminder for missing payment request link
    */
   async createPaymentRequestReminder(expense: Expense): Promise<void> {
-    if (expense.status === ExpenseStatus.APPROVED) {
+    if (expense.status === ExpenseStatus.IN_PROGRESS) {
       await this.notificationService.createNotification({
         title: 'Payment Request Link Missing',
         message: `Expense ${expense.paymentId} is approved but missing payment request link. Please add the payment request link.`,

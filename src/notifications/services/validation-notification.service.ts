@@ -36,7 +36,7 @@ export class ValidationNotificationService {
       );
 
       // Also notify accountants if expense is in submitted status
-      if (expense.status === ExpenseStatus.SUBMITTED) {
+      if (expense.status === ExpenseStatus.IN_PROGRESS) {
         this.notifyAccountantsOfValidationIssues(
           expense,
           validationResult.missingFields,

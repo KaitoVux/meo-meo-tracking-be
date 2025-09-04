@@ -21,24 +21,26 @@ export class ExpenseWorkflowService {
     private readonly reminderService: ReminderService,
   ) {}
 
-  // Define allowed status transitions (Requirements 2.1-2.5)
+  // Define allowed status transitions - simplified with full flexibility except PAID
   private readonly allowedTransitions: StatusTransition[] = [
-    {
-      from: ExpenseStatus.DRAFT,
-      to: ExpenseStatus.SUBMITTED,
-      validationRequired: true,
-    },
-    { from: ExpenseStatus.SUBMITTED, to: ExpenseStatus.APPROVED },
-    { from: ExpenseStatus.SUBMITTED, to: ExpenseStatus.DRAFT }, // Allow back to draft for corrections
-    { from: ExpenseStatus.APPROVED, to: ExpenseStatus.PAID },
-    { from: ExpenseStatus.APPROVED, to: ExpenseStatus.SUBMITTED }, // Allow back for corrections
-    { from: ExpenseStatus.PAID, to: ExpenseStatus.CLOSED },
-    { from: ExpenseStatus.PAID, to: ExpenseStatus.APPROVED }, // Allow back if payment was incorrect
+    // From DRAFT
+    { from: ExpenseStatus.DRAFT, to: ExpenseStatus.IN_PROGRESS },
+    { from: ExpenseStatus.DRAFT, to: ExpenseStatus.ON_HOLD },
+
+    // From IN_PROGRESS
+    { from: ExpenseStatus.IN_PROGRESS, to: ExpenseStatus.DRAFT },
+    { from: ExpenseStatus.IN_PROGRESS, to: ExpenseStatus.PAID },
+    { from: ExpenseStatus.IN_PROGRESS, to: ExpenseStatus.ON_HOLD },
+
+    // From ON_HOLD (can resume to any active status)
+    { from: ExpenseStatus.ON_HOLD, to: ExpenseStatus.DRAFT },
+    { from: ExpenseStatus.ON_HOLD, to: ExpenseStatus.IN_PROGRESS },
+
+    // PAID is final - no transitions allowed
   ];
 
   /**
    * Updates expense status with workflow validation
-   * Requirements 2.1-2.5: Status workflow management
    */
   async updateExpenseStatus(
     expenseId: string,
@@ -66,9 +68,9 @@ export class ExpenseWorkflowService {
     // Validate status transition
     this.validateStatusTransition(expense.status, newStatus);
 
-    // Additional validation for submission
-    if (newStatus === ExpenseStatus.SUBMITTED) {
-      this.validateExpenseForSubmission(expense);
+    // Additional validation for moving to IN_PROGRESS
+    if (newStatus === ExpenseStatus.IN_PROGRESS) {
+      this.validateExpenseForProcessing(expense);
     }
 
     const oldStatus = expense.status;
@@ -106,6 +108,11 @@ export class ExpenseWorkflowService {
       );
     }
 
+    // PAID is final state - no transitions allowed
+    if (currentStatus === ExpenseStatus.PAID) {
+      throw new BadRequestException('Cannot change status of paid expenses');
+    }
+
     const allowedTransition = this.allowedTransitions.find(
       (transition) =>
         transition.from === currentStatus && transition.to === newStatus,
@@ -119,10 +126,9 @@ export class ExpenseWorkflowService {
   }
 
   /**
-   * Validates expense data before submission
-   * Requirement 2.6: Notifications for missing fields
+   * Validates expense data before moving to IN_PROGRESS
    */
-  private validateExpenseForSubmission(expense: Expense): void {
+  private validateExpenseForProcessing(expense: Expense): void {
     const missingFields: string[] = [];
 
     if (!expense.vendor) missingFields.push('Vendor');
@@ -133,7 +139,8 @@ export class ExpenseWorkflowService {
 
     if (missingFields.length > 0) {
       throw new BadRequestException({
-        message: 'Cannot submit expense with missing required fields',
+        message:
+          'Cannot move expense to processing with missing required fields',
         missingFields,
       });
     }
@@ -141,7 +148,6 @@ export class ExpenseWorkflowService {
 
   /**
    * Handles actions after status transitions
-   * Requirement 2.7: Reminder to collect invoice after payment
    */
   private async handlePostTransitionActions(
     expense: Expense,
@@ -157,9 +163,9 @@ export class ExpenseWorkflowService {
       }
     }
 
-    // When status changes to SUBMITTED, validate completeness
-    if (newStatus === ExpenseStatus.SUBMITTED) {
-      console.log(`Expense ${expense.id} submitted for review`);
+    // When status changes to IN_PROGRESS, log processing start
+    if (newStatus === ExpenseStatus.IN_PROGRESS) {
+      console.log(`Expense ${expense.id} moved to processing`);
     }
 
     // Notify about status change
@@ -181,6 +187,11 @@ export class ExpenseWorkflowService {
    * Gets available status transitions for an expense
    */
   getAvailableTransitions(currentStatus: ExpenseStatus): ExpenseStatus[] {
+    // PAID expenses cannot transition
+    if (currentStatus === ExpenseStatus.PAID) {
+      return [];
+    }
+
     return this.allowedTransitions
       .filter((transition) => transition.from === currentStatus)
       .map((transition) => transition.to);
@@ -204,25 +215,22 @@ export class ExpenseWorkflowService {
 
   /**
    * Checks if user can perform status transition
+   * Note: With approval removal, all users can transition (subject to business rules)
    */
   canUserTransitionStatus(
     userRole: string,
     currentStatus: ExpenseStatus,
     newStatus: ExpenseStatus,
   ): boolean {
+    // PAID expenses cannot transition
+    if (currentStatus === ExpenseStatus.PAID) {
+      return false;
+    }
+
     const transition = this.allowedTransitions.find(
       (t) => t.from === currentStatus && t.to === newStatus,
     );
 
-    if (!transition) {
-      return false;
-    }
-
-    // If no role restrictions, allow all users
-    if (!transition.allowedRoles || transition.allowedRoles.length === 0) {
-      return true;
-    }
-
-    return transition.allowedRoles.includes(userRole);
+    return !!transition;
   }
 }

@@ -279,10 +279,9 @@ export class DashboardService {
   ): Record<ExpenseStatus, number> {
     const counts = {
       [ExpenseStatus.DRAFT]: 0,
-      [ExpenseStatus.SUBMITTED]: 0,
-      [ExpenseStatus.APPROVED]: 0,
+      [ExpenseStatus.IN_PROGRESS]: 0,
       [ExpenseStatus.PAID]: 0,
-      [ExpenseStatus.CLOSED]: 0,
+      [ExpenseStatus.ON_HOLD]: 0,
     };
 
     expenses.forEach((expense) => {

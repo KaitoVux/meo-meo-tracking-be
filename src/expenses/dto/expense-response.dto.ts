@@ -124,7 +124,7 @@ export class ExpenseResponseDto {
   @ApiProperty({
     enum: ExpenseStatus,
     description: 'Current status of the expense in the workflow',
-    example: ExpenseStatus.SUBMITTED,
+    example: ExpenseStatus.IN_PROGRESS,
   })
   status!: ExpenseStatus;
 

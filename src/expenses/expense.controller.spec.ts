@@ -147,7 +147,7 @@ describe('ExpenseController', () => {
       const stats = {
         totalExpenses: 10,
         totalAmount: 1000,
-        statusCounts: { DRAFT: 5, SUBMITTED: 3, APPROVED: 2 },
+        statusCounts: { DRAFT: 5, IN_PROGRESS: 3, PAID: 2 },
       };
 
       const user = { id: 'user-123', email: 'test@example.com' };
@@ -255,7 +255,7 @@ describe('ExpenseController', () => {
   describe('updateStatus', () => {
     it('should update expense status successfully', async () => {
       const updateStatusDto: UpdateExpenseStatusDto = {
-        status: ExpenseStatus.SUBMITTED,
+        status: ExpenseStatus.IN_PROGRESS,
         notes: 'Ready for review',
       };
 
@@ -274,7 +274,7 @@ describe('ExpenseController', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(expense);
-      expect(result.message).toBe('Expense status updated to SUBMITTED');
+      expect(result.message).toBe('Expense status updated to IN_PROGRESS');
       expect(expenseService.updateStatus).toHaveBeenCalledWith(
         'expense-123',
         ExpenseStatus.SUBMITTED,

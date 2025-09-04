@@ -31,10 +31,9 @@ export enum ExpenseType {
 
 export enum ExpenseStatus {
   DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  APPROVED = 'APPROVED',
+  IN_PROGRESS = 'IN_PROGRESS',
   PAID = 'PAID',
-  CLOSED = 'CLOSED',
+  ON_HOLD = 'ON_HOLD',
 }
 
 @Entity()

@@ -250,7 +250,7 @@ export class ExpenseService {
     this.validationService.validateOrThrow(validationResult);
 
     // Check if expense can be updated (not in final states)
-    if (expense.status === ExpenseStatus.CLOSED) {
+    if (expense.status === ExpenseStatus.PAID) {
       throw new BadRequestException('Cannot update closed expense');
     }
 

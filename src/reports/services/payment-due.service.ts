@@ -39,7 +39,7 @@ export class PaymentDueService {
 
     // Get approved expenses that need payment
     const where: FilterQuery<Expense> = {
-      status: ExpenseStatus.APPROVED,
+      status: ExpenseStatus.IN_PROGRESS,
       deletedAt: null,
     };
 
@@ -96,7 +96,7 @@ export class PaymentDueService {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const where: FilterQuery<Expense> = {
-      status: ExpenseStatus.APPROVED,
+      status: ExpenseStatus.IN_PROGRESS,
       transactionDate: { $gte: weekAgo, $lte: now },
       deletedAt: null,
     };
@@ -124,7 +124,7 @@ export class PaymentDueService {
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const where: FilterQuery<Expense> = {
-      status: ExpenseStatus.APPROVED,
+      status: ExpenseStatus.IN_PROGRESS,
       transactionDate: { $gte: monthAgo, $lte: now },
       deletedAt: null,
     };
@@ -151,7 +151,7 @@ export class PaymentDueService {
     const overdueDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const where: FilterQuery<Expense> = {
-      status: ExpenseStatus.APPROVED,
+      status: ExpenseStatus.IN_PROGRESS,
       transactionDate: { $lt: overdueDate },
       deletedAt: null,
     };
@@ -197,16 +197,12 @@ export class PaymentDueService {
     });
 
     const approved = expenses.filter((e) =>
-      [
-        ExpenseStatus.APPROVED,
-        ExpenseStatus.PAID,
-        ExpenseStatus.CLOSED,
-      ].includes(e.status),
+      [ExpenseStatus.IN_PROGRESS, ExpenseStatus.PAID].includes(e.status),
     );
-    const paid = expenses.filter((e) =>
-      [ExpenseStatus.PAID, ExpenseStatus.CLOSED].includes(e.status),
+    const paid = expenses.filter((e) => e.status === ExpenseStatus.PAID);
+    const pending = expenses.filter(
+      (e) => e.status === ExpenseStatus.IN_PROGRESS,
     );
-    const pending = expenses.filter((e) => e.status === ExpenseStatus.APPROVED);
 
     // Calculate average payment time (from approved to paid)
     const paymentTimes = paid
@@ -317,7 +313,7 @@ export class PaymentDueService {
     const statusHistory = expense.statusHistory?.getItems() || [];
 
     const approvedHistory = statusHistory.find(
-      (h) => h.toStatus === ExpenseStatus.APPROVED,
+      (h) => h.toStatus === ExpenseStatus.IN_PROGRESS,
     );
     const paidHistory = statusHistory.find(
       (h) => h.toStatus === ExpenseStatus.PAID,

@@ -289,7 +289,7 @@ describe('ExpenseService', () => {
     });
 
     it('should throw error when updating closed expense', async () => {
-      expense.status = ExpenseStatus.CLOSED;
+      expense.status = ExpenseStatus.PAID;
       entityManager.findOne.mockResolvedValue(expense);
 
       await expect(service.update('expense-123', updateDto)).rejects.toThrow(
@@ -462,8 +462,8 @@ describe('ExpenseService', () => {
       const mockExpensesForStatus = [
         { status: 'DRAFT' },
         { status: 'DRAFT' },
-        { status: 'SUBMITTED' },
-        { status: 'APPROVED' },
+        { status: 'IN_PROGRESS' },
+        { status: 'PAID' },
       ];
 
       entityManager.count.mockResolvedValue(10);

@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsDateString,
   IsUUID,
+  IsUrl,
   Min,
 } from 'class-validator';
 import {
@@ -79,4 +80,9 @@ export class CreateExpenseDto {
   @IsOptional()
   @IsUUID()
   invoiceFileId?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsUrl({}, { message: 'Invoice link must be a valid URL' })
+  invoiceLink?: string;
 }

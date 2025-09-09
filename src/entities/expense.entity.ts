@@ -103,6 +103,9 @@ export class Expense extends BaseEntity {
   @Enum(() => ExpenseStatus)
   status: ExpenseStatus = ExpenseStatus.DRAFT;
 
+  @Property({ type: 'text', nullable: true, fieldName: 'invoice_link' })
+  invoiceLink?: string;
+
   // Relations with explicit foreign key field names
   @ManyToOne(() => User, { fieldName: 'submitter_id' })
   submitter!: User;

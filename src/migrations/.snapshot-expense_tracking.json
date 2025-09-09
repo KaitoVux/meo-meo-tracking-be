@@ -942,6 +942,15 @@
           "enumItems": ["DRAFT", "IN_PROGRESS", "PAID", "ON_HOLD"],
           "mappedType": "enum"
         },
+        "invoice_link": {
+          "name": "invoice_link",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "submitter_id": {
           "name": "submitter_id",
           "type": "uuid",

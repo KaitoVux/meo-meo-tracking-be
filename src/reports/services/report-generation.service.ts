@@ -253,20 +253,31 @@ export class ReportGenerationService {
       }
     }
 
-    // Category filtering
-    if (query.categories && query.categories.length > 0) {
+    // Category filtering - optimize for "select all"
+    if (
+      !query.selectAllCategories &&
+      query.categories &&
+      query.categories.length > 0
+    ) {
       where.category = { $in: query.categories };
     }
+    // If selectAllCategories is true, don't add category filter (include all)
 
-    // Vendor filtering
-    if (query.vendors && query.vendors.length > 0) {
+    // Vendor filtering - optimize for "select all"
+    if (!query.selectAllVendors && query.vendors && query.vendors.length > 0) {
       where.vendor = { name: { $in: query.vendors } };
     }
+    // If selectAllVendors is true, don't add vendor filter (include all)
 
-    // Status filtering
-    if (query.statuses && query.statuses.length > 0) {
+    // Status filtering - optimize for "select all"
+    if (
+      !query.selectAllStatuses &&
+      query.statuses &&
+      query.statuses.length > 0
+    ) {
       where.status = { $in: query.statuses };
     }
+    // If selectAllStatuses is true, don't add status filter (include all)
 
     // Currency filtering
     if (query.currency) {

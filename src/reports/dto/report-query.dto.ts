@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsEnum,
   IsArray,
+  IsBoolean,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import {
@@ -23,21 +24,27 @@ export class ReportQueryDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   categories?: string[];
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   vendors?: string[];
 
   @IsOptional()
   @IsArray()
-  @IsEnum(ExpenseStatus, { each: true })
-  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   statuses?: ExpenseStatus[];
+
+  @IsOptional()
+  @IsBoolean()
+  selectAllCategories?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  selectAllVendors?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  selectAllStatuses?: boolean;
 
   @IsOptional()
   @IsEnum(Currency)
@@ -60,7 +67,7 @@ export class ReportQueryDto {
   expenseMonth?: string;
 
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
   includeDeleted?: boolean;
 
   @IsOptional()

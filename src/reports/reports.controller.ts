@@ -157,11 +157,21 @@ export class ReportsController {
       userId,
     );
 
-    // Export in requested format
-    const exportResult = this.exportService.exportReport(
+    // Debug: Log the query to see what dates are being received
+    console.log('Export query:', {
+      dateFrom: query.dateFrom,
+      dateTo: query.dateTo,
+      format: query.format,
+      reportType: query.reportType,
+    });
+
+    // Export in requested format with meaningful filename
+    const exportResult = await this.exportService.exportReport(
       reportData,
       query.format,
       query.reportType,
+      query.dateFrom ? new Date(query.dateFrom) : undefined,
+      query.dateTo ? new Date(query.dateTo) : undefined,
     );
 
     // Set response headers
@@ -170,7 +180,13 @@ export class ReportsController {
       'Content-Disposition',
       `attachment; filename="${exportResult.filename}"`,
     );
-    res.setHeader('Content-Length', exportResult.buffer.length);
+
+    // Get buffer length based on type
+    const bufferLength =
+      exportResult.buffer instanceof ArrayBuffer
+        ? exportResult.buffer.byteLength
+        : exportResult.buffer.length;
+    res.setHeader('Content-Length', bufferLength);
 
     // Send file
     res.status(HttpStatus.OK).send(exportResult.buffer);

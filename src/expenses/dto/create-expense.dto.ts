@@ -84,5 +84,6 @@ export class CreateExpenseDto {
   @IsOptional()
   @IsString()
   @IsUrl({}, { message: 'Invoice link must be a valid URL' })
+  @Transform(({ value }) => (value === '' ? undefined : value))
   invoiceLink?: string;
 }

@@ -1,0 +1,4 @@
+Parent ID,Sub-ID,Vendor,Description,Type (In/Out),Amount (Before VAT),VAT Amount,Amount (After VAT),Currency,Transaction Date,Category,Payment Method,Invoice Link
+EXP-001,,ABC Company,Office supplies purchase,Out,100.00,20.00,120.00,USD,2024-01-15,Office Supplies,BANK_TRANSFER,https://example.com/invoice1
+EXP-002,SUB-001,XYZ Corp,Software license,Out,500.00,100.00,600.00,USD,2024-01-16,Software,CREDIT_CARD,
+EXP-003,,Local Vendor,Petty cash expense,Out,25.00,5.00,30.00,USD,2024-01-17,Miscellaneous,PETTY_CASH,

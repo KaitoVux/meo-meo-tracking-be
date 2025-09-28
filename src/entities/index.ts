@@ -6,3 +6,4 @@ export * from './category.entity';
 export * from './vendor.entity';
 export * from './expense-status-history.entity';
 export * from './notification.entity';
+export * from './import-record.entity';

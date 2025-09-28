@@ -9,6 +9,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { CategoryModule } from './categories/category.module';
 import { VendorModule } from './vendors/vendor.module';
 import { ReportsModule } from './reports/reports.module';
+import { ImportModule } from './import/import.module';
 import { CommonModule } from './common/common.module';
 
 import config from './mikro-orm.config';
@@ -24,6 +25,7 @@ import config from './mikro-orm.config';
     CategoryModule,
     VendorModule,
     ReportsModule,
+    ImportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,91 @@
+name: Deploy Backend to Railway
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Backend
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: expense_tracking_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run linting
+        run: |
+          cd backend
+          npm run lint
+
+      - name: Run tests
+        run: |
+          cd backend
+          npm run test:run
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/expense_tracking_test
+          JWT_SECRET: test-jwt-secret
+          NODE_ENV: test
+
+      - name: Build application
+        run: |
+          cd backend
+          npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    name: Deploy to Railway
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: |
+          cd backend
+          railway login --token ${{ secrets.RAILWAY_TOKEN }}
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_PROD }}
+          else
+            railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
+          fi

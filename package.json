@@ -28,7 +28,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy:staging": "railway deploy --service $RAILWAY_SERVICE_ID_STAGING",
+    "deploy:production": "railway deploy --service $RAILWAY_SERVICE_ID_PROD",
+    "postbuild": "echo 'Health check will be compiled with TypeScript build'"
   },
   "dependencies": {
     "@mikro-orm/core": "^6.4.16",

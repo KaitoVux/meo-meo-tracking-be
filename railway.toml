@@ -1,0 +1,15 @@
+# Railway configuration
+[build]
+builder = "nixpacks"
+
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[environments.production]
+variables = { NODE_ENV = "production" }
+
+[environments.staging]
+variables = { NODE_ENV = "staging" }

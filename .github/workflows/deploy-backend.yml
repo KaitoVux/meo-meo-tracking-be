@@ -1,5 +1,8 @@
 name: Deploy Backend to Railway
 
+# Backend uses Railway for hosting with Neon PostgreSQL database
+# DATABASE_URL environment variable in Railway points to Neon instance
+
 on:
   push:
     branches:
@@ -16,7 +19,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Test Backend
-    
+
+    # Use local PostgreSQL for CI testing (not Neon)
+    # Production uses Neon PostgreSQL via Railway environment variables
     services:
       postgres:
         image: postgres:15
@@ -72,6 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy to Railway
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+
+    # Railway deployment automatically uses DATABASE_URL pointing to Neon PostgreSQL
+    # Environment variables are configured in Railway dashboard
     
     steps:
       - name: Checkout

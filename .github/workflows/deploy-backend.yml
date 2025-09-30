@@ -38,28 +38,3 @@ jobs:
       - name: Build application
         run: npm run build
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    name: Deploy to Railway
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
-
-    # Railway deployment automatically uses DATABASE_URL pointing to Neon PostgreSQL
-    # Environment variables are configured in Railway dashboard
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy to Railway
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            railway up --service=${{ secrets.RAILWAY_SERVICE_ID_PROD }}
-          else
-            railway up --service=${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
-          fi
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

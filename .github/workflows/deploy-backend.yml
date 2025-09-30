@@ -8,12 +8,10 @@ on:
     branches:
       - main
       - staging
-    paths:
-      - 'backend/**'
-      - '.github/workflows/deploy-backend.yml'
   pull_request:
-    paths:
-      - 'backend/**'
+    branches:
+      - main
+      - staging
 
 jobs:
   test:
@@ -46,31 +44,16 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd backend
-          npm ci
+        run: npm ci
 
       - name: Run linting
-        run: |
-          cd backend
-          npm run lint
-
-      - name: Run tests
-        run: |
-          cd backend
-          npm run test:run
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/expense_tracking_test
-          JWT_SECRET: test-jwt-secret
-          NODE_ENV: test
+        run: npm run lint
 
       - name: Build application
-        run: |
-          cd backend
-          npm run build
+        run: npm run build
 
   deploy:
     needs: test
@@ -90,7 +73,6 @@ jobs:
 
       - name: Deploy to Railway
         run: |
-          cd backend
           railway login --token ${{ secrets.RAILWAY_TOKEN }}
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_PROD }}

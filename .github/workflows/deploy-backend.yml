@@ -57,9 +57,9 @@ jobs:
       - name: Deploy to Railway
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_PROD }}
+            railway up --service=${{ secrets.RAILWAY_SERVICE_ID_PROD }}
           else
-            railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
+            railway up --service=${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
           fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

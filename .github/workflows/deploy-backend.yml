@@ -16,24 +16,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Test Backend
-
-    # Use local PostgreSQL for CI testing (not Neon)
-    # Production uses Neon PostgreSQL via Railway environment variables
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: expense_tracking_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+    name: Build and Lint
 
     steps:
       - name: Checkout
@@ -73,9 +56,10 @@ jobs:
 
       - name: Deploy to Railway
         run: |
-          railway login --token ${{ secrets.RAILWAY_TOKEN }}
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_PROD }}
           else
             railway deploy --service ${{ secrets.RAILWAY_SERVICE_ID_STAGING }}
           fi
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

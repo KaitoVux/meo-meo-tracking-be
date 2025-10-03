@@ -96,7 +96,7 @@ export class DashboardService {
 
     // Get all expenses for calculations
     const expenses = await this.em.find(Expense, where, {
-      populate: ['submitter', 'vendor'],
+      populate: ['submitter', 'vendor', 'categoryEntity'],
       orderBy: { transactionDate: 'DESC' },
     });
 
@@ -401,7 +401,9 @@ export class DashboardService {
     const categoryMap = new Map<string, { amount: number; count: number }>();
 
     expenses.forEach((expense) => {
-      const category = expense.category;
+      // Use categoryEntity.name if available, fallback to category string
+      const category =
+        expense.categoryEntity?.name || expense.category || 'Uncategorized';
       if (!categoryMap.has(category)) {
         categoryMap.set(category, { amount: 0, count: 0 });
       }
